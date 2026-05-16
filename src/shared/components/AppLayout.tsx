@@ -9,6 +9,14 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
       : 'text-slate-300 hover:bg-white/10 hover:text-white',
   ].join(' ');
 
+const navItems = [
+  { to: '/dashboard', label: 'Dashboard' },
+  { to: '/org-unit-types', label: 'Org Unit Types' },
+  { to: '/org-unit-type-hierarchies', label: 'Type Hierarchy' },
+  { to: '/organization-units', label: 'Organization Units' },
+  { to: '/employees', label: 'Employees' },
+] as const;
+
 const AppLayout = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -38,13 +46,12 @@ const AppLayout = () => {
             </div>
           </div>
 
-          <nav className="hidden items-center gap-2 md:flex">
-            <NavLink to="/dashboard" className={navLinkClass}>
-              Dashboard
-            </NavLink>
-            <NavLink to="/org-unit-types" className={navLinkClass}>
-              Org Unit Types
-            </NavLink>
+          <nav className="hidden items-center gap-2 lg:flex">
+            {navItems.map((item) => (
+              <NavLink key={item.to} to={item.to} className={navLinkClass}>
+                {item.label}
+              </NavLink>
+            ))}
             <button
               type="button"
               onClick={handleLogout}
@@ -57,7 +64,7 @@ const AppLayout = () => {
           <button
             type="button"
             onClick={() => setMenuOpen((open) => !open)}
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 text-slate-200 md:hidden"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 text-slate-200 lg:hidden"
             aria-expanded={menuOpen}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           >
@@ -74,18 +81,18 @@ const AppLayout = () => {
         </div>
 
         {menuOpen && (
-          <nav className="border-t border-white/10 px-4 py-3 md:hidden">
+          <nav className="border-t border-white/10 px-4 py-3 lg:hidden">
             <div className="flex flex-col gap-1">
-              <NavLink to="/dashboard" className={navLinkClass} onClick={closeMenu}>
-                Dashboard
-              </NavLink>
-              <NavLink
-                to="/org-unit-types"
-                className={navLinkClass}
-                onClick={closeMenu}
-              >
-                Org Unit Types
-              </NavLink>
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={navLinkClass}
+                  onClick={closeMenu}
+                >
+                  {item.label}
+                </NavLink>
+              ))}
               <button
                 type="button"
                 onClick={() => {

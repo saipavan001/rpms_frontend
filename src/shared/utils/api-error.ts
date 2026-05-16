@@ -22,7 +22,7 @@ export const getApiErrorMessage = (
   }
 
   if (error.response?.status === 404) {
-    return 'API endpoint not found. Ensure the backend is deployed with organization unit types support.';
+    return 'The requested resource was not found.';
   }
 
   if (error.response?.status === 401) {

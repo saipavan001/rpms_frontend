@@ -1,20 +1,37 @@
-import type { OrgUnitType } from '../../types/org-unit-type';
+import type { OrgUnitTypeHierarchy } from '../types/org-unit-type-hierarchy';
 
-type OrgUnitTypeCardProps = {
-  item: OrgUnitType;
-  onEdit: (item: OrgUnitType) => void;
-  onDelete: (item: OrgUnitType) => void;
+type OrgUnitTypeHierarchyCardProps = {
+  item: OrgUnitTypeHierarchy;
+  onEdit: (item: OrgUnitTypeHierarchy) => void;
+  onDelete: (item: OrgUnitTypeHierarchy) => void;
 };
 
-const OrgUnitTypeCard = ({ item, onEdit, onDelete }: OrgUnitTypeCardProps) => {
+const OrgUnitTypeHierarchyCard = ({
+  item,
+  onEdit,
+  onDelete,
+}: OrgUnitTypeHierarchyCardProps) => {
   return (
     <article className="rounded-xl border border-white/10 bg-white/5 p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <p className="font-mono text-xs text-slate-400">{item.code}</p>
-          <h3 className="mt-1 truncate text-base font-semibold text-white">
-            {item.name}
+          <p className="text-sm text-slate-300">
+            <span className="font-mono text-xs text-slate-400">
+              {item.parent_ou_type.code}
+            </span>
+            <span className="mx-2 text-slate-500">→</span>
+            <span className="font-mono text-xs text-slate-400">
+              {item.child_ou_type.code}
+            </span>
+          </p>
+          <h3 className="mt-2 text-base font-semibold text-white">
+            {item.parent_ou_type.name} → {item.child_ou_type.name}
           </h3>
+          {item.display_order !== null && (
+            <p className="mt-1 text-xs text-slate-400">
+              Display order: {item.display_order}
+            </p>
+          )}
         </div>
         <span
           className={
@@ -26,12 +43,6 @@ const OrgUnitTypeCard = ({ item, onEdit, onDelete }: OrgUnitTypeCardProps) => {
           {item.is_active ? 'Active' : 'Inactive'}
         </span>
       </div>
-
-      {item.description && (
-        <p className="mt-3 line-clamp-2 text-sm text-slate-400">
-          {item.description}
-        </p>
-      )}
 
       <div className="mt-4 flex gap-2">
         <button
@@ -53,4 +64,4 @@ const OrgUnitTypeCard = ({ item, onEdit, onDelete }: OrgUnitTypeCardProps) => {
   );
 };
 
-export default OrgUnitTypeCard;
+export default OrgUnitTypeHierarchyCard;

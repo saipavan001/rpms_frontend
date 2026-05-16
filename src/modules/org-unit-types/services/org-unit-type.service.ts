@@ -1,15 +1,10 @@
-import { apiClient } from '../api/apiClient';
+import { apiClient } from '../../../shared/api/apiClient';
+import type { ApiResponse } from '../../../shared/types/api';
 import type {
   CreateOrgUnitTypeInput,
   OrgUnitType,
   UpdateOrgUnitTypeInput,
 } from '../types/org-unit-type';
-
-type ApiResponse<T> = {
-  success: boolean;
-  data: T;
-  message?: string;
-};
 
 export const getOrgUnitTypes = async (
   isActive?: boolean

@@ -1,32 +1,38 @@
 import { useEffect, useState } from 'react';
 
-import type { OrgUnitTypeFormValues } from '../../types/org-unit-type';
+import type { OrgUnitType } from '../../org-unit-types/types/org-unit-type';
+import type { OrgUnitTypeHierarchyFormValues } from '../types/org-unit-type-hierarchy';
 
-type OrgUnitTypeModalProps = {
+type OrgUnitTypeHierarchyModalProps = {
   title: string;
-  initialValues?: OrgUnitTypeFormValues;
+  initialValues?: OrgUnitTypeHierarchyFormValues;
   submitLabel: string;
   loading?: boolean;
+  ouTypes: OrgUnitType[];
   onClose: () => void;
-  onSubmit: (values: OrgUnitTypeFormValues) => Promise<void>;
+  onSubmit: (values: OrgUnitTypeHierarchyFormValues) => Promise<void>;
 };
 
-const emptyValues: OrgUnitTypeFormValues = {
-  code: '',
-  name: '',
-  description: '',
+const emptyValues: OrgUnitTypeHierarchyFormValues = {
+  parent_ou_type_id: '',
+  child_ou_type_id: '',
+  display_order: '',
   is_active: true,
 };
 
-const OrgUnitTypeModal = ({
+const inputClass =
+  'w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-base text-white outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm';
+
+const OrgUnitTypeHierarchyModal = ({
   title,
   initialValues,
   submitLabel,
   loading = false,
+  ouTypes,
   onClose,
   onSubmit,
-}: OrgUnitTypeModalProps) => {
-  const [values, setValues] = useState<OrgUnitTypeFormValues>(
+}: OrgUnitTypeHierarchyModalProps) => {
+  const [values, setValues] = useState<OrgUnitTypeHierarchyFormValues>(
     initialValues ?? emptyValues
   );
 
@@ -36,8 +42,18 @@ const OrgUnitTypeModal = ({
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (values.parent_ou_type_id === values.child_ou_type_id) {
+      return;
+    }
+
     await onSubmit(values);
   };
+
+  const sameTypeSelected =
+    values.parent_ou_type_id &&
+    values.child_ou_type_id &&
+    values.parent_ou_type_id === values.child_ou_type_id;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4">
@@ -63,48 +79,78 @@ const OrgUnitTypeModal = ({
           <div className="space-y-4">
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-200">
-                Code
+                Parent organization unit type
               </label>
-              <input
-                type="text"
-                value={values.code}
-                onChange={(e) =>
-                  setValues((prev) => ({ ...prev, code: e.target.value }))
-                }
-                className="w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-base text-white outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
-                Name
-              </label>
-              <input
-                type="text"
-                value={values.name}
-                onChange={(e) =>
-                  setValues((prev) => ({ ...prev, name: e.target.value }))
-                }
-                className="w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-base text-white outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
-                Description
-              </label>
-              <textarea
-                value={values.description}
+              <select
+                value={values.parent_ou_type_id}
                 onChange={(e) =>
                   setValues((prev) => ({
                     ...prev,
-                    description: e.target.value,
+                    parent_ou_type_id: e.target.value,
                   }))
                 }
-                rows={3}
-                className="w-full resize-none rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-base text-white outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                className={inputClass}
+                required
+              >
+                <option value="" className="bg-slate-900">
+                  Select parent type
+                </option>
+                {ouTypes.map((type) => (
+                  <option key={type.id} value={type.id} className="bg-slate-900">
+                    {type.code} — {type.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-200">
+                Child organization unit type
+              </label>
+              <select
+                value={values.child_ou_type_id}
+                onChange={(e) =>
+                  setValues((prev) => ({
+                    ...prev,
+                    child_ou_type_id: e.target.value,
+                  }))
+                }
+                className={inputClass}
+                required
+              >
+                <option value="" className="bg-slate-900">
+                  Select child type
+                </option>
+                {ouTypes.map((type) => (
+                  <option key={type.id} value={type.id} className="bg-slate-900">
+                    {type.code} — {type.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {sameTypeSelected && (
+              <p className="text-sm text-amber-300">
+                Parent and child types must be different.
+              </p>
+            )}
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-200">
+                Display order
+              </label>
+              <input
+                type="number"
+                value={values.display_order}
+                onChange={(e) =>
+                  setValues((prev) => ({
+                    ...prev,
+                    display_order: e.target.value,
+                  }))
+                }
+                className={inputClass}
+                min={0}
+                step={1}
               />
             </div>
 
@@ -134,7 +180,7 @@ const OrgUnitTypeModal = ({
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || Boolean(sameTypeSelected)}
               className="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 sm:w-auto sm:py-2"
             >
               {loading ? 'Saving...' : submitLabel}
@@ -146,4 +192,4 @@ const OrgUnitTypeModal = ({
   );
 };
 
-export default OrgUnitTypeModal;
+export default OrgUnitTypeHierarchyModal;

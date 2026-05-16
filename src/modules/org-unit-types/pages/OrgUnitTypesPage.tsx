@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import OrgUnitTypeCard from '../components/org-unit-types/OrgUnitTypeCard';
-import OrgUnitTypeModal from '../components/org-unit-types/OrgUnitTypeModal';
+import OrgUnitTypeCard from '../components/OrgUnitTypeCard';
+import OrgUnitTypeModal from '../components/OrgUnitTypeModal';
 import {
   createOrgUnitType,
   deleteOrgUnitType,
@@ -9,7 +9,7 @@ import {
   updateOrgUnitType,
 } from '../services/org-unit-type.service';
 import type { OrgUnitType, OrgUnitTypeFormValues } from '../types/org-unit-type';
-import { getApiErrorMessage } from '../utils/api-error';
+import { getApiErrorMessage } from '../../../shared/utils/api-error';
 
 type FilterValue = 'all' | 'active' | 'inactive';
 
