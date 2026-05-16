@@ -10,6 +10,8 @@ import {
 } from '../services/org-unit-type.service';
 import type { OrgUnitType, OrgUnitTypeFormValues } from '../types/org-unit-type';
 import { getApiErrorMessage } from '../../../shared/utils/api-error';
+import { useAuth } from '../../../shared/context/AuthContext';
+import ViewOnlyBanner from '../../../shared/components/ViewOnlyBanner';
 
 type FilterValue = 'all' | 'active' | 'inactive';
 
@@ -21,6 +23,7 @@ const toFormValues = (item: OrgUnitType): OrgUnitTypeFormValues => ({
 });
 
 const OrgUnitTypesPage = () => {
+  const { canWrite } = useAuth();
   const [items, setItems] = useState<OrgUnitType[]>([]);
   const [filter, setFilter] = useState<FilterValue>('all');
   const [loading, setLoading] = useState(true);
@@ -144,14 +147,18 @@ const OrgUnitTypesPage = () => {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={openCreateModal}
-          className="w-full rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 sm:w-auto sm:py-2.5"
-        >
-          + Add Type
-        </button>
+        {canWrite && (
+          <button
+            type="button"
+            onClick={openCreateModal}
+            className="w-full rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 sm:w-auto sm:py-2.5"
+          >
+            + Add Type
+          </button>
+        )}
       </div>
+
+      {!canWrite && <ViewOnlyBanner />}
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
         <label className="text-sm text-slate-300">Filter</label>
@@ -198,6 +205,7 @@ const OrgUnitTypesPage = () => {
                 item={item}
                 onEdit={openEditModal}
                 onDelete={handleDelete}
+                canWrite={canWrite}
               />
             ))}
           </div>
@@ -213,7 +221,9 @@ const OrgUnitTypesPage = () => {
                     Description
                   </th>
                   <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium text-right">Actions</th>
+                  {canWrite && (
+                    <th className="px-4 py-3 font-medium text-right">Actions</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -238,24 +248,26 @@ const OrgUnitTypesPage = () => {
                         {item.is_active ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="flex justify-end gap-2">
-                        <button
-                          type="button"
-                          onClick={() => openEditModal(item)}
-                          className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-white/10"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(item)}
-                          className="rounded-lg border border-red-500/30 px-3 py-1.5 text-xs font-medium text-red-300 hover:bg-red-500/10"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
+                    {canWrite && (
+                      <td className="px-4 py-3">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            type="button"
+                            onClick={() => openEditModal(item)}
+                            className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-white/10"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(item)}
+                            className="rounded-lg border border-red-500/30 px-3 py-1.5 text-xs font-medium text-red-300 hover:bg-red-500/10"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

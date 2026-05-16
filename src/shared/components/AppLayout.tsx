@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 
+import { getPrimaryRoleLabel } from '../auth/permissions';
+import { useAuth } from '../context/AuthContext';
+
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
     'block rounded-lg px-4 py-2.5 text-sm font-medium transition-colors',
@@ -9,7 +12,7 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
       : 'text-slate-300 hover:bg-white/10 hover:text-white',
   ].join(' ');
 
-const navItems = [
+const erpNavItems = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/org-unit-types', label: 'Org Unit Types' },
   { to: '/org-unit-type-hierarchies', label: 'Type Hierarchy' },
@@ -17,12 +20,21 @@ const navItems = [
   { to: '/employees', label: 'Employees' },
 ] as const;
 
+const employeeNavItems = [{ to: '/welcome', label: 'Home' }] as const;
+
 const AppLayout = () => {
   const navigate = useNavigate();
+  const { user, logout, canManageUsers, isEmployeePortalUser } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const navItems = isEmployeePortalUser
+    ? [...employeeNavItems]
+    : canManageUsers
+      ? [...erpNavItems, { to: '/users', label: 'Users' }]
+      : [...erpNavItems];
+
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
+    logout();
     navigate('/');
   };
 
@@ -41,7 +53,7 @@ const AppLayout = () => {
                 RPMS
               </h1>
               <p className="hidden truncate text-xs text-slate-400 sm:block">
-                Research Project Management System
+                {user ? getPrimaryRoleLabel(user.role_names) : 'RPMS'}
               </p>
             </div>
           </div>

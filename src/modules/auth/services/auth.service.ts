@@ -1,28 +1,54 @@
 import axios, { isAxiosError } from 'axios';
 
+import { apiClient } from '../../../shared/api/apiClient';
+import type { ApiResponse } from '../../../shared/types/api';
+import type { AuthUser } from '../../../shared/auth/permissions';
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export type LoginApiResponse = {
   success?: boolean;
   data?: {
     token?: string;
-    accessToken?: string;
+    user?: AuthUser;
   };
-  token?: string;
-  accessToken?: string;
 };
 
 export const extractAccessToken = (
   response: LoginApiResponse
-): string | null => {
-  const nestedToken =
-    response.data?.token ?? response.data?.accessToken;
+): string | null => response.data?.token ?? null;
 
-  if (nestedToken) {
-    return nestedToken;
-  }
+export const extractAuthUser = (
+  response: LoginApiResponse
+): AuthUser | null => response.data?.user ?? null;
 
-  return response.token ?? response.accessToken ?? null;
+export const loginApi = async (username: string, password: string) => {
+  const response = await axios.post<LoginApiResponse>(
+    `${API_BASE_URL}/auth/login`,
+    { username, password }
+  );
+
+  return response.data;
+};
+
+export type EmployeeSignupInput = {
+  employee_code: string;
+  username: string;
+  password: string;
+};
+
+export const registerEmployeeApi = async (input: EmployeeSignupInput) => {
+  const response = await axios.post<LoginApiResponse>(
+    `${API_BASE_URL}/auth/register/employee`,
+    input
+  );
+
+  return response.data;
+};
+
+export const fetchCurrentUser = async (): Promise<AuthUser> => {
+  const response = await apiClient.get<ApiResponse<AuthUser>>('/auth/me');
+  return response.data.data;
 };
 
 const INVALID_CREDENTIALS_MESSAGE =
@@ -58,20 +84,18 @@ const looksLikeHttpError = (message: string): boolean => {
   );
 };
 
-export const getLoginErrorMessage = (error: unknown): string => {
+export const getAuthErrorMessage = (error: unknown, fallback: string): string => {
   if (!isAxiosError(error)) {
-    return INVALID_CREDENTIALS_MESSAGE;
+    return fallback;
   }
 
   const status = error.response?.status;
   const apiMessage = extractApiMessage(error.response?.data);
 
-  if (status === 400 || status === 401 || status === 403) {
+  if (status === 400 || status === 401 || status === 403 || status === 409) {
     if (apiMessage && !looksLikeHttpError(apiMessage)) {
       return apiMessage;
     }
-
-    return INVALID_CREDENTIALS_MESSAGE;
   }
 
   if (status && status >= 500) {
@@ -82,21 +106,11 @@ export const getLoginErrorMessage = (error: unknown): string => {
     return apiMessage;
   }
 
-  return INVALID_CREDENTIALS_MESSAGE;
+  return fallback;
 };
 
-export const loginApi = async (
-  username: string,
-  password: string
-) => {
+export const getLoginErrorMessage = (error: unknown): string =>
+  getAuthErrorMessage(error, INVALID_CREDENTIALS_MESSAGE);
 
-  const response = await axios.post(
-    `${API_BASE_URL}/auth/login`,
-    {
-      username,
-      password
-    }
-  );
-
-  return response.data as LoginApiResponse;
-};
+export const getSignupErrorMessage = (error: unknown): string =>
+  getAuthErrorMessage(error, 'Registration failed. Please check your details.');

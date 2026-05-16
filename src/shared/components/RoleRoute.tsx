@@ -2,31 +2,32 @@ import { Navigate } from 'react-router-dom';
 
 import { useAuth } from '../context/AuthContext';
 
-type ProtectedRouteProps = {
+type RoleRouteProps = {
   children: React.ReactNode;
+  allow: (roles: string[]) => boolean;
+  redirectTo?: string;
 };
 
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+const RoleRoute = ({
+  children,
+  allow,
+  redirectTo = '/dashboard',
+}: RoleRouteProps) => {
   const { user, loading } = useAuth();
-  const token = localStorage.getItem('accessToken');
-
-  if (!token) {
-    return <Navigate to="/" replace />;
-  }
 
   if (loading) {
     return (
       <p className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-slate-400">
-        Loading session...
+        Loading...
       </p>
     );
   }
 
-  if (!user) {
-    return <Navigate to="/" replace />;
+  if (!user || !allow(user.roles)) {
+    return <Navigate to={redirectTo} replace />;
   }
 
   return children;
 };
 
-export default ProtectedRoute;
+export default RoleRoute;

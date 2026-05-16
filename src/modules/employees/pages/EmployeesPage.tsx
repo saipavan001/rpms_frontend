@@ -17,6 +17,8 @@ import type {
   EmployeeFormValues,
 } from '../types/employee';
 import { getApiErrorMessage } from '../../../shared/utils/api-error';
+import { useAuth } from '../../../shared/context/AuthContext';
+import ViewOnlyBanner from '../../../shared/components/ViewOnlyBanner';
 
 type FilterValue = 'all' | 'active' | 'inactive';
 
@@ -35,6 +37,7 @@ const toFormValues = (item: Employee): EmployeeFormValues => ({
 });
 
 const EmployeesPage = () => {
+  const { canWrite } = useAuth();
   const [items, setItems] = useState<Employee[]>([]);
   const [organizationUnits, setOrganizationUnits] = useState<OrganizationUnit[]>(
     []
@@ -182,27 +185,31 @@ const EmployeesPage = () => {
           </p>
         </div>
 
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <button
-            type="button"
-            onClick={() => setBulkOpen(true)}
-            className="w-full rounded-xl border border-white/10 px-5 py-3 text-sm font-semibold text-slate-200 transition-colors hover:bg-white/10 sm:w-auto sm:py-2.5"
-          >
-            Bulk upload
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedItem(null);
-              setModalMode('create');
-            }}
-            disabled={organizationUnits.length === 0}
-            className="w-full rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-60 sm:w-auto sm:py-2.5"
-          >
-            + Add Employee
-          </button>
-        </div>
+        {canWrite && (
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => setBulkOpen(true)}
+              className="w-full rounded-xl border border-white/10 px-5 py-3 text-sm font-semibold text-slate-200 transition-colors hover:bg-white/10 sm:w-auto sm:py-2.5"
+            >
+              Bulk upload
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedItem(null);
+                setModalMode('create');
+              }}
+              disabled={organizationUnits.length === 0}
+              className="w-full rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-60 sm:w-auto sm:py-2.5"
+            >
+              + Add Employee
+            </button>
+          </div>
+        )}
       </div>
+
+      {!canWrite && <ViewOnlyBanner />}
 
       {organizationUnits.length === 0 && !loading && (
         <div className="rounded-xl border border-amber-500/30 bg-amber-500/15 px-4 py-3 text-sm text-amber-200">
@@ -264,6 +271,7 @@ const EmployeesPage = () => {
                   setModalMode('edit');
                 }}
                 onDelete={handleDelete}
+                canWrite={canWrite}
               />
             ))}
           </div>
@@ -281,7 +289,9 @@ const EmployeesPage = () => {
                     </th>
                     <th className="px-4 py-3 font-medium">Type</th>
                     <th className="px-4 py-3 font-medium">Status</th>
-                    <th className="px-4 py-3 font-medium text-right">Actions</th>
+                    {canWrite && (
+                      <th className="px-4 py-3 font-medium text-right">Actions</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -310,27 +320,29 @@ const EmployeesPage = () => {
                           {item.is_active ? 'Active' : 'Inactive'}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="flex justify-end gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedItem(item);
-                              setModalMode('edit');
-                            }}
-                            className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-white/10"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDelete(item)}
-                            className="rounded-lg border border-red-500/30 px-3 py-1.5 text-xs font-medium text-red-300 hover:bg-red-500/10"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
+                      {canWrite && (
+                        <td className="px-4 py-3">
+                          <div className="flex justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedItem(item);
+                                setModalMode('edit');
+                              }}
+                              className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-white/10"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(item)}
+                              className="rounded-lg border border-red-500/30 px-3 py-1.5 text-xs font-medium text-red-300 hover:bg-red-500/10"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -340,7 +352,7 @@ const EmployeesPage = () => {
         </>
       )}
 
-      {modalMode === 'create' && (
+      {canWrite && modalMode === 'create' && (
         <EmployeeModal
           title="Add Employee"
           submitLabel="Create"
@@ -351,7 +363,7 @@ const EmployeesPage = () => {
         />
       )}
 
-      {modalMode === 'edit' && selectedItem && (
+      {canWrite && modalMode === 'edit' && selectedItem && (
         <EmployeeModal
           title="Edit Employee"
           submitLabel="Save Changes"
@@ -366,7 +378,7 @@ const EmployeesPage = () => {
         />
       )}
 
-      {bulkOpen && (
+      {canWrite && bulkOpen && (
         <EmployeeBulkUploadModal
           organizationUnits={organizationUnits}
           onClose={() => setBulkOpen(false)}

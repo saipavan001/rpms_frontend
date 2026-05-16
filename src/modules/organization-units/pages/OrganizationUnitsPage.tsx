@@ -15,6 +15,8 @@ import type {
   OrganizationUnitFormValues,
 } from '../types/organization-unit';
 import { getApiErrorMessage } from '../../../shared/utils/api-error';
+import { useAuth } from '../../../shared/context/AuthContext';
+import ViewOnlyBanner from '../../../shared/components/ViewOnlyBanner';
 
 type FilterValue = 'all' | 'active' | 'inactive';
 
@@ -29,6 +31,7 @@ const toFormValues = (item: OrganizationUnit): OrganizationUnitFormValues => ({
 });
 
 const OrganizationUnitsPage = () => {
+  const { canWrite } = useAuth();
   const [items, setItems] = useState<OrganizationUnit[]>([]);
   const [ouTypes, setOuTypes] = useState<OrgUnitType[]>([]);
   const [filter, setFilter] = useState<FilterValue>('all');
@@ -147,17 +150,21 @@ const OrganizationUnitsPage = () => {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => {
-            setSelectedItem(null);
-            setModalMode('create');
-          }}
-          className="w-full rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 sm:w-auto sm:py-2.5"
-        >
-          + Add Unit
-        </button>
+        {canWrite && (
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedItem(null);
+              setModalMode('create');
+            }}
+            className="w-full rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 sm:w-auto sm:py-2.5"
+          >
+            + Add Unit
+          </button>
+        )}
       </div>
+
+      {!canWrite && <ViewOnlyBanner />}
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
         <label className="text-sm text-slate-300">Filter</label>
@@ -207,6 +214,7 @@ const OrganizationUnitsPage = () => {
                   setModalMode('edit');
                 }}
                 onDelete={handleDelete}
+                canWrite={canWrite}
               />
             ))}
           </div>
@@ -223,7 +231,9 @@ const OrganizationUnitsPage = () => {
                       Parent
                     </th>
                     <th className="px-4 py-3 font-medium">Status</th>
-                    <th className="px-4 py-3 font-medium text-right">Actions</th>
+                    {canWrite && (
+                      <th className="px-4 py-3 font-medium text-right">Actions</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -249,27 +259,29 @@ const OrganizationUnitsPage = () => {
                           {item.is_active ? 'Active' : 'Inactive'}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="flex justify-end gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedItem(item);
-                              setModalMode('edit');
-                            }}
-                            className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-white/10"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDelete(item)}
-                            className="rounded-lg border border-red-500/30 px-3 py-1.5 text-xs font-medium text-red-300 hover:bg-red-500/10"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
+                      {canWrite && (
+                        <td className="px-4 py-3">
+                          <div className="flex justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedItem(item);
+                                setModalMode('edit');
+                              }}
+                              className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-white/10"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(item)}
+                              className="rounded-lg border border-red-500/30 px-3 py-1.5 text-xs font-medium text-red-300 hover:bg-red-500/10"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -279,7 +291,7 @@ const OrganizationUnitsPage = () => {
         </>
       )}
 
-      {modalMode === 'create' && (
+      {canWrite && modalMode === 'create' && (
         <OrganizationUnitModal
           title="Add Organization Unit"
           submitLabel="Create"
@@ -291,7 +303,7 @@ const OrganizationUnitsPage = () => {
         />
       )}
 
-      {modalMode === 'edit' && selectedItem && (
+      {canWrite && modalMode === 'edit' && selectedItem && (
         <OrganizationUnitModal
           title="Edit Organization Unit"
           submitLabel="Save Changes"

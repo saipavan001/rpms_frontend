@@ -4,9 +4,15 @@ type OrgUnitTypeCardProps = {
   item: OrgUnitType;
   onEdit: (item: OrgUnitType) => void;
   onDelete: (item: OrgUnitType) => void;
+  canWrite?: boolean;
 };
 
-const OrgUnitTypeCard = ({ item, onEdit, onDelete }: OrgUnitTypeCardProps) => {
+const OrgUnitTypeCard = ({
+  item,
+  onEdit,
+  onDelete,
+  canWrite = true,
+}: OrgUnitTypeCardProps) => {
   return (
     <article className="rounded-xl border border-white/10 bg-white/5 p-4">
       <div className="flex items-start justify-between gap-3">
@@ -33,22 +39,24 @@ const OrgUnitTypeCard = ({ item, onEdit, onDelete }: OrgUnitTypeCardProps) => {
         </p>
       )}
 
-      <div className="mt-4 flex gap-2">
-        <button
-          type="button"
-          onClick={() => onEdit(item)}
-          className="flex-1 rounded-lg border border-white/10 py-2 text-sm font-medium text-slate-200 hover:bg-white/10"
-        >
-          Edit
-        </button>
-        <button
-          type="button"
-          onClick={() => onDelete(item)}
-          className="flex-1 rounded-lg border border-red-500/30 py-2 text-sm font-medium text-red-300 hover:bg-red-500/10"
-        >
-          Delete
-        </button>
-      </div>
+      {canWrite && (
+        <div className="mt-4 flex gap-2">
+          <button
+            type="button"
+            onClick={() => onEdit(item)}
+            className="flex-1 rounded-lg border border-white/10 py-2 text-sm font-medium text-slate-200 hover:bg-white/10"
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            onClick={() => onDelete(item)}
+            className="flex-1 rounded-lg border border-red-500/30 py-2 text-sm font-medium text-red-300 hover:bg-red-500/10"
+          >
+            Delete
+          </button>
+        </div>
+      )}
     </article>
   );
 };

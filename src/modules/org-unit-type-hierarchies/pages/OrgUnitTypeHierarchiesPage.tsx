@@ -15,6 +15,8 @@ import type {
   OrgUnitTypeHierarchyFormValues,
 } from '../types/org-unit-type-hierarchy';
 import { getApiErrorMessage } from '../../../shared/utils/api-error';
+import { useAuth } from '../../../shared/context/AuthContext';
+import ViewOnlyBanner from '../../../shared/components/ViewOnlyBanner';
 
 type FilterValue = 'all' | 'active' | 'inactive';
 
@@ -41,6 +43,7 @@ const parseDisplayOrder = (value: string): number | null => {
 };
 
 const OrgUnitTypeHierarchiesPage = () => {
+  const { canWrite } = useAuth();
   const [items, setItems] = useState<OrgUnitTypeHierarchy[]>([]);
   const [ouTypes, setOuTypes] = useState<OrgUnitType[]>([]);
   const [filter, setFilter] = useState<FilterValue>('all');
@@ -173,18 +176,22 @@ const OrgUnitTypeHierarchiesPage = () => {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => {
-            setSelectedItem(null);
-            setModalMode('create');
-          }}
-          disabled={activeOuTypes.length < 2}
-          className="w-full rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-60 sm:w-auto sm:py-2.5"
-        >
-          + Add Hierarchy
-        </button>
+        {canWrite && (
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedItem(null);
+              setModalMode('create');
+            }}
+            disabled={activeOuTypes.length < 2}
+            className="w-full rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-60 sm:w-auto sm:py-2.5"
+          >
+            + Add Hierarchy
+          </button>
+        )}
       </div>
+
+      {!canWrite && <ViewOnlyBanner />}
 
       {!loading && ouTypes.length < 2 && (
         <div className="rounded-xl border border-amber-500/30 bg-amber-500/15 px-4 py-3 text-sm text-amber-200">
@@ -247,6 +254,7 @@ const OrgUnitTypeHierarchiesPage = () => {
                   setModalMode('edit');
                 }}
                 onDelete={handleDelete}
+                canWrite={canWrite}
               />
             ))}
           </div>
@@ -260,7 +268,9 @@ const OrgUnitTypeHierarchiesPage = () => {
                     <th className="px-4 py-3 font-medium">Child type</th>
                     <th className="px-4 py-3 font-medium">Order</th>
                     <th className="px-4 py-3 font-medium">Status</th>
-                    <th className="px-4 py-3 font-medium text-right">Actions</th>
+                    {canWrite && (
+                      <th className="px-4 py-3 font-medium text-right">Actions</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -295,27 +305,29 @@ const OrgUnitTypeHierarchiesPage = () => {
                           {item.is_active ? 'Active' : 'Inactive'}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="flex justify-end gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedItem(item);
-                              setModalMode('edit');
-                            }}
-                            className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-white/10"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDelete(item)}
-                            className="rounded-lg border border-red-500/30 px-3 py-1.5 text-xs font-medium text-red-300 hover:bg-red-500/10"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
+                      {canWrite && (
+                        <td className="px-4 py-3">
+                          <div className="flex justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedItem(item);
+                                setModalMode('edit');
+                              }}
+                              className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-white/10"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(item)}
+                              className="rounded-lg border border-red-500/30 px-3 py-1.5 text-xs font-medium text-red-300 hover:bg-red-500/10"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -325,7 +337,7 @@ const OrgUnitTypeHierarchiesPage = () => {
         </>
       )}
 
-      {modalMode === 'create' && (
+      {canWrite && modalMode === 'create' && (
         <OrgUnitTypeHierarchyModal
           title="Add Organization Unit Type Hierarchy"
           submitLabel="Create"
@@ -336,7 +348,7 @@ const OrgUnitTypeHierarchiesPage = () => {
         />
       )}
 
-      {modalMode === 'edit' && selectedItem && (
+      {canWrite && modalMode === 'edit' && selectedItem && (
         <OrgUnitTypeHierarchyModal
           title="Edit Organization Unit Type Hierarchy"
           submitLabel="Save Changes"
