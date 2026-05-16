@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import type { OrganizationUnit } from '../../organization-units/types/organization-unit';
+import { APP_INPUT_CLASS } from '../../../shared/theme/classes';
 import type { EmployeeFormValues } from '../types/employee';
 
 type EmployeeModalProps = {
@@ -25,8 +26,7 @@ const emptyValues: EmployeeFormValues = {
   is_active: true,
 };
 
-const inputClass =
-  'w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-base text-white outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm';
+const inputClass = APP_INPUT_CLASS;
 
 const EmployeeModal = ({
   title,
@@ -51,16 +51,16 @@ const EmployeeModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4">
-      <div className="flex max-h-[92dvh] w-full flex-col rounded-t-2xl border border-white/10 bg-slate-900 shadow-2xl sm:max-h-[90vh] sm:max-w-lg sm:rounded-2xl">
-        <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-4 sm:px-6">
-          <h2 className="pr-4 text-lg font-semibold text-white sm:text-xl">
+    <div className="app-modal-overlay">
+      <div className="app-modal-panel">
+        <div className="flex shrink-0 items-center justify-between app-sidebar-brand border-b px-4 py-4 sm:px-6">
+          <h2 className="pr-4 app-heading text-lg sm:text-xl">
             {title}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
+            className="app-btn-icon flex h-9 w-9 shrink-0"
             aria-label="Close"
           >
             ✕
@@ -73,7 +73,7 @@ const EmployeeModal = ({
         >
           <div className="space-y-4">
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
+              <label className="mb-2 block app-label text-sm font-medium">
                 Employee code
               </label>
               <input
@@ -91,7 +91,7 @@ const EmployeeModal = ({
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
+              <label className="mb-2 block app-label text-sm font-medium">
                 Employee name
               </label>
               <input
@@ -109,7 +109,7 @@ const EmployeeModal = ({
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
+              <label className="mb-2 block app-label text-sm font-medium">
                 Official email
               </label>
               <input
@@ -127,7 +127,7 @@ const EmployeeModal = ({
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
+              <label className="mb-2 block app-label text-sm font-medium">
                 Personal email
               </label>
               <input
@@ -144,7 +144,7 @@ const EmployeeModal = ({
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
+              <label className="mb-2 block app-label text-sm font-medium">
                 Phone number
               </label>
               <input
@@ -161,7 +161,7 @@ const EmployeeModal = ({
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
+              <label className="mb-2 block app-label text-sm font-medium">
                 Employment type
               </label>
               <input
@@ -179,7 +179,7 @@ const EmployeeModal = ({
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
+              <label className="mb-2 block app-label text-sm font-medium">
                 Joining date
               </label>
               <input
@@ -196,7 +196,7 @@ const EmployeeModal = ({
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
+              <label className="mb-2 block app-label text-sm font-medium">
                 Organization unit
               </label>
               <select
@@ -218,7 +218,7 @@ const EmployeeModal = ({
               </select>
             </div>
 
-            <label className="flex items-center gap-3 py-1 text-sm text-slate-200">
+            <label className="flex items-center gap-3 app-label py-1 text-sm">
               <input
                 type="checkbox"
                 checked={values.is_active}
@@ -228,24 +228,24 @@ const EmployeeModal = ({
                     is_active: e.target.checked,
                   }))
                 }
-                className="h-5 w-5 rounded border-white/20 bg-white/10 text-blue-600 focus:ring-blue-500"
+                className="h-5 w-5 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500 dark:border-white/20 dark:bg-white/10"
               />
               Active
             </label>
           </div>
 
-          <div className="mt-6 flex shrink-0 flex-col-reverse gap-3 border-t border-white/10 pt-4 sm:flex-row sm:justify-end">
+          <div className="mt-6 flex shrink-0 flex-col-reverse gap-3 app-divider border-t pt-4 sm:flex-row sm:justify-end">
             <button
               type="button"
               onClick={onClose}
-              className="w-full rounded-xl border border-white/10 px-4 py-3 text-sm font-medium text-slate-300 hover:bg-white/10 sm:w-auto sm:py-2"
+              className="app-btn-secondary w-full px-4 py-3 text-sm sm:w-auto sm:py-2"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 sm:w-auto sm:py-2"
+              className="app-btn-primary w-full px-4 py-3 text-sm sm:w-auto sm:py-2"
             >
               {loading ? 'Saving...' : submitLabel}
             </button>

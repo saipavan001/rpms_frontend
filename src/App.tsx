@@ -1,11 +1,14 @@
 import AppRoutes from './routes/AppRoutes';
 import { AuthProvider } from './shared/context/AuthContext';
+import { ThemeProvider } from './shared/context/ThemeContext';
 
 function App() {
   return (
-    <AuthProvider>
-      <AppRoutes />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

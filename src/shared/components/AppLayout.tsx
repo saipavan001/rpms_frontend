@@ -1,127 +1,74 @@
 import { useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 
-import { getPrimaryRoleLabel } from '../auth/permissions';
 import { useAuth } from '../context/AuthContext';
-
-const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-  [
-    'block rounded-lg px-4 py-2.5 text-sm font-medium transition-colors',
-    isActive
-      ? 'bg-blue-600 text-white'
-      : 'text-slate-300 hover:bg-white/10 hover:text-white',
-  ].join(' ');
-
-const erpNavItems = [
-  { to: '/dashboard', label: 'Dashboard' },
-  { to: '/org-unit-types', label: 'Org Unit Types' },
-  { to: '/org-unit-type-hierarchies', label: 'Type Hierarchy' },
-  { to: '/organization-units', label: 'Organization Units' },
-  { to: '/employees', label: 'Employees' },
-] as const;
+import SidebarNav from './SidebarNav';
+import TopNavBar from './TopNavBar';
 
 const employeeNavItems = [{ to: '/welcome', label: 'Home' }] as const;
 
 const AppLayout = () => {
   const navigate = useNavigate();
   const { user, logout, canManageUsers, isEmployeePortalUser } = useAuth();
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const navItems = isEmployeePortalUser
-    ? [...employeeNavItems]
-    : canManageUsers
-      ? [...erpNavItems, { to: '/users', label: 'Users' }]
-      : [...erpNavItems];
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = async () => {
     await logout();
     navigate('/');
   };
 
-  const closeMenu = () => setMenuOpen(false);
+  const closeSidebar = () => setSidebarOpen(false);
+
+  if (isEmployeePortalUser) {
+    return (
+      <div className="app-shell">
+        <TopNavBar
+          user={user}
+          subtitle="Employee portal"
+          onLogout={handleLogout}
+          navItems={employeeNavItems}
+        />
+        <main className="app-main-scroll">
+          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+            <Outlet />
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen min-h-[100dvh] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-slate-900/95 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
-          <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/10 sm:h-10 sm:w-10">
-              <span className="text-base font-bold text-white sm:text-lg">R</span>
-            </div>
-            <div className="min-w-0">
-              <h1 className="truncate text-base font-bold text-white sm:text-lg">
-                RPMS
-              </h1>
-              <p className="hidden truncate text-xs text-slate-400 sm:block">
-                {user ? getPrimaryRoleLabel(user.role_names) : 'RPMS'}
-              </p>
-            </div>
-          </div>
+    <div className="app-shell">
+      <TopNavBar
+        user={user}
+        onLogout={handleLogout}
+        showMenuButton
+        menuOpen={sidebarOpen}
+        onMenuToggle={() => setSidebarOpen((open) => !open)}
+      />
 
-          <nav className="hidden items-center gap-2 lg:flex">
-            {navItems.map((item) => (
-              <NavLink key={item.to} to={item.to} className={navLinkClass}>
-                {item.label}
-              </NavLink>
-            ))}
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="ml-1 rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
-            >
-              Logout
-            </button>
-          </nav>
+      {sidebarOpen && (
+        <button
+          type="button"
+          className="app-drawer-backdrop"
+          aria-label="Close navigation"
+          onClick={closeSidebar}
+        />
+      )}
 
-          <button
-            type="button"
-            onClick={() => setMenuOpen((open) => !open)}
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 text-slate-200 lg:hidden"
-            aria-expanded={menuOpen}
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          >
-            {menuOpen ? (
-              <span className="text-xl leading-none">✕</span>
-            ) : (
-              <span className="flex flex-col gap-1">
-                <span className="block h-0.5 w-5 rounded bg-current" />
-                <span className="block h-0.5 w-5 rounded bg-current" />
-                <span className="block h-0.5 w-5 rounded bg-current" />
-              </span>
-            )}
-          </button>
+      <aside
+        className={[
+          'app-sidebar app-sidebar-fixed fixed bottom-0 left-0 z-50 flex flex-col shadow-xl transition-transform duration-200 lg:z-40 lg:translate-x-0 lg:shadow-none',
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full',
+        ].join(' ')}
+      >
+        <SidebarNav canManageUsers={canManageUsers} onNavigate={closeSidebar} />
+      </aside>
+
+      <main className="app-main-scroll">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+          <Outlet />
         </div>
-
-        {menuOpen && (
-          <nav className="border-t border-white/10 px-4 py-3 lg:hidden">
-            <div className="flex flex-col gap-1">
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={navLinkClass}
-                  onClick={closeMenu}
-                >
-                  {item.label}
-                </NavLink>
-              ))}
-              <button
-                type="button"
-                onClick={() => {
-                  closeMenu();
-                  handleLogout();
-                }}
-                className="mt-1 rounded-lg border border-white/10 px-4 py-2.5 text-left text-sm font-medium text-slate-300 hover:bg-white/10"
-              >
-                Logout
-              </button>
-            </div>
-          </nav>
-        )}
-      </header>
-
-      <main className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-8">
-        <Outlet />
       </main>
     </div>
   );

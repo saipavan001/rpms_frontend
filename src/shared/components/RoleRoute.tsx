@@ -17,7 +17,7 @@ const RoleRoute = ({
 
   if (loading) {
     return (
-      <p className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-slate-400">
+      <p className="app-card rounded-2xl p-8 text-center text-slate-400">
         Loading...
       </p>
     );

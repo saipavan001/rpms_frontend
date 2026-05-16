@@ -10,11 +10,18 @@ import {
 } from '../services/auth.service';
 import { useAuth } from '../../../shared/context/AuthContext';
 import { getHomePath } from '../../../shared/auth/permissions';
+import {
+  APP_FOOTER_LINE,
+  APP_MONOGRAM,
+  APP_NAME,
+  APP_TAGLINE,
+} from '../../../shared/config/brand';
+import ThemeToggle from '../../../shared/components/ThemeToggle';
+import { APP_INPUT_CLASS } from '../../../shared/theme/classes';
 
 type AuthMode = 'login' | 'signup';
 
-const inputClass =
-  'w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-base text-white placeholder:text-slate-400 outline-none transition-all focus:ring-2 focus:ring-blue-500 sm:text-sm';
+const inputClass = `${APP_INPUT_CLASS} transition-all`;
 
 const completeAuth = (
   response: Awaited<ReturnType<typeof loginApi>>,
@@ -101,29 +108,32 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen min-h-[100dvh] items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-4 py-6 sm:py-8">
+    <div className="app-auth-shell relative">
+      <div className="absolute right-4 top-4 sm:right-6 sm:top-6">
+        <ThemeToggle />
+      </div>
       <div className="w-full max-w-md">
-        <div className="rounded-2xl border border-white/10 bg-white/10 p-5 shadow-2xl backdrop-blur-xl sm:rounded-3xl sm:p-8">
+        <div className="app-auth-card">
           <div className="mb-6 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/10 sm:mb-5 sm:h-20 sm:w-20">
-              <span className="text-2xl font-bold text-white sm:text-3xl">R</span>
+            <div className="app-logo-box mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl sm:mb-5 sm:h-20 sm:w-20">
+              <span className="app-logo-letter text-3xl sm:text-4xl">
+                {APP_MONOGRAM}
+              </span>
             </div>
-            <h1 className="mb-2 text-3xl font-bold text-white sm:text-4xl">
-              RPMS
+            <h1 className="mb-2 app-brand-title text-3xl sm:text-4xl">
+              {APP_NAME}
             </h1>
-            <p className="text-sm text-slate-300">
-              Research Project Management System
-            </p>
+            <p className="app-label text-sm">{APP_TAGLINE}</p>
           </div>
 
-          <div className="mb-6 flex rounded-xl border border-white/10 bg-white/5 p-1">
+          <div className="app-auth-tabs">
             <button
               type="button"
               onClick={() => switchMode('login')}
-              className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition-colors ${
+              className={`app-auth-tab ${
                 mode === 'login'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'app-auth-tab-active'
+                  : 'app-auth-tab-inactive'
               }`}
             >
               Login
@@ -131,10 +141,10 @@ const LoginPage = () => {
             <button
               type="button"
               onClick={() => switchMode('signup')}
-              className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition-colors ${
+              className={`app-auth-tab ${
                 mode === 'signup'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'app-auth-tab-active'
+                  : 'app-auth-tab-inactive'
               }`}
             >
               Employee sign up
@@ -144,7 +154,7 @@ const LoginPage = () => {
           {mode === 'login' ? (
             <form onSubmit={handleLogin} className="space-y-5">
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-200">
+                <label className="mb-2 block app-label text-sm font-medium">
                   Username
                 </label>
                 <input
@@ -158,7 +168,7 @@ const LoginPage = () => {
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-200">
+                <label className="mb-2 block app-label text-sm font-medium">
                   Password
                 </label>
                 <input
@@ -174,7 +184,7 @@ const LoginPage = () => {
               {warning && (
                 <div
                   role="alert"
-                  className="flex gap-3 rounded-xl border border-amber-500/30 bg-amber-500/15 px-4 py-3"
+                  className="app-alert-warning flex gap-3"
                 >
                   <span
                     className="text-lg leading-none text-amber-300"
@@ -188,19 +198,19 @@ const LoginPage = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-xl bg-blue-600 py-3.5 text-base font-semibold text-white transition-all duration-200 hover:bg-blue-700 disabled:opacity-60 sm:py-3 sm:text-sm"
+                className="app-btn-primary w-full py-3.5 text-base sm:py-3 sm:text-sm"
               >
                 {loading ? 'Signing in...' : 'Login'}
               </button>
             </form>
           ) : (
             <form onSubmit={handleSignup} className="space-y-4">
-              <p className="text-xs text-slate-400">
+              <p className="app-muted text-xs">
                 Use your official employee code from HR records. One account per
                 employee code.
               </p>
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-200">
+                <label className="mb-2 block app-label text-sm font-medium">
                   Employee code
                 </label>
                 <input
@@ -214,7 +224,7 @@ const LoginPage = () => {
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-200">
+                <label className="mb-2 block app-label text-sm font-medium">
                   Username
                 </label>
                 <input
@@ -228,7 +238,7 @@ const LoginPage = () => {
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-200">
+                <label className="mb-2 block app-label text-sm font-medium">
                   Password
                 </label>
                 <input
@@ -243,7 +253,7 @@ const LoginPage = () => {
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-200">
+                <label className="mb-2 block app-label text-sm font-medium">
                   Confirm password
                 </label>
                 <input
@@ -260,7 +270,7 @@ const LoginPage = () => {
               {warning && (
                 <div
                   role="alert"
-                  className="flex gap-3 rounded-xl border border-amber-500/30 bg-amber-500/15 px-4 py-3"
+                  className="app-alert-warning flex gap-3"
                 >
                   <span
                     className="text-lg leading-none text-amber-300"
@@ -274,17 +284,15 @@ const LoginPage = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-xl bg-blue-600 py-3.5 text-base font-semibold text-white transition-all duration-200 hover:bg-blue-700 disabled:opacity-60 sm:py-3 sm:text-sm"
+                className="app-btn-primary w-full py-3.5 text-base sm:py-3 sm:text-sm"
               >
                 {loading ? 'Creating account...' : 'Create employee account'}
               </button>
             </form>
           )}
 
-          <div className="mt-8 border-t border-white/10 pt-6 text-center">
-            <p className="text-sm text-slate-400">
-              Secure Enterprise Research Management Platform
-            </p>
+          <div className="mt-8 app-divider border-t pt-6 text-center">
+            <p className="app-muted text-sm">{APP_FOOTER_LINE}</p>
           </div>
         </div>
       </div>

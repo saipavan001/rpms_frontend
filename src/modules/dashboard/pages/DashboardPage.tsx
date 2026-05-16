@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { useAuth } from '../../../shared/context/AuthContext';
+import { APP_NAME, APP_TAGLINE } from '../../../shared/config/brand';
+import ManagementSystemsHub from '../../../shared/components/ManagementSystemsHub';
 import { getEmployees } from '../../employees/services/employee.service';
 import { getOrgUnitTypeHierarchies } from '../../org-unit-type-hierarchies/services/org-unit-type-hierarchy.service';
 import { getOrgUnitTypes } from '../../org-unit-types/services/org-unit-type.service';
@@ -121,6 +124,7 @@ const statusStyles: Record<
 };
 
 const DashboardPage = () => {
+  const { canManageUsers } = useAuth();
   const [stats, setStats] = useState<SetupStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -160,15 +164,30 @@ const DashboardPage = () => {
     : 0;
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="mx-auto max-w-7xl space-y-8 sm:space-y-10">
       <div>
         <p className="text-sm font-medium uppercase tracking-wide text-blue-400">
-          Super Admin
+          {APP_NAME}
         </p>
-        <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">
-          Setup guide
+        <h1 className="mt-1 app-page-title">
+          Management systems
         </h1>
-        <p className="mt-2 max-w-2xl text-sm text-slate-400 sm:text-base">
+        <p className="mt-2 max-w-2xl app-muted text-sm sm:text-base">
+          {APP_TAGLINE}. Open an active system below or follow the organization
+          setup guide when you are getting started.
+        </p>
+      </div>
+
+      <ManagementSystemsHub canManageUsers={canManageUsers} />
+
+      <div className="app-divider border-t pt-8">
+        <p className="text-sm font-medium uppercase tracking-wide text-violet-400">
+          Organization Management System
+        </p>
+        <h2 className="mt-1 text-xl font-bold text-white sm:text-2xl">
+          Setup guide
+        </h2>
+        <p className="mt-2 max-w-2xl app-muted text-sm sm:text-base">
           Complete these steps in order to configure your organization structure
           and employee records. Each step unlocks the next.
         </p>
@@ -177,7 +196,7 @@ const DashboardPage = () => {
       {error && (
         <div
           role="alert"
-          className="rounded-xl border border-amber-500/30 bg-amber-500/15 px-4 py-3 text-sm text-amber-200"
+          className="app-alert-warning"
         >
           {error}
         </div>
@@ -192,10 +211,10 @@ const DashboardPage = () => {
         ].map((item) => (
           <div
             key={item.label}
-            className="rounded-xl border border-white/10 bg-white/5 px-4 py-3"
+            className="app-stat-tile"
           >
-            <p className="text-xs text-slate-400">{item.label}</p>
-            <p className="mt-1 text-2xl font-bold text-white">
+            <p className="app-muted text-xs">{item.label}</p>
+            <p className="mt-1 app-brand-title text-2xl">
               {loading ? '—' : (item.value ?? 0)}
             </p>
           </div>
@@ -203,14 +222,14 @@ const DashboardPage = () => {
       </div>
 
       {!loading && stats && (
-        <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+        <div className="app-stat-tile">
           <div className="mb-2 flex items-center justify-between text-sm">
             <span className="text-slate-300">Overall progress</span>
             <span className="font-medium text-white">
               {completedSteps} / {setupSteps.length} steps complete
             </span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-white/10">
+          <div className="app-progress-track">
             <div
               className="h-full rounded-full bg-blue-500 transition-all duration-500"
               style={{
@@ -254,7 +273,7 @@ const DashboardPage = () => {
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="text-base font-semibold text-white sm:text-lg">
+                      <h2 className="app-card-title text-base sm:text-lg">
                         {step.title}
                       </h2>
                       <span
@@ -263,7 +282,7 @@ const DashboardPage = () => {
                         {styles.label}
                       </span>
                     </div>
-                    <p className="mt-1 text-sm text-slate-400">
+                    <p className="mt-1 app-muted text-sm">
                       {step.description}
                     </p>
                   </div>
@@ -284,11 +303,11 @@ const DashboardPage = () => {
                   </Link>
                 </div>
 
-                <ul className="mt-4 space-y-2 border-t border-white/10 pt-4">
+                <ul className="mt-4 space-y-2 app-divider border-t pt-4">
                   {step.tasks.map((task) => (
                     <li
                       key={task}
-                      className="flex gap-2 text-sm text-slate-300"
+                      className="flex gap-2 app-label text-sm"
                     >
                       <span className="text-slate-500" aria-hidden>
                         •
@@ -321,9 +340,9 @@ const DashboardPage = () => {
         })}
       </div>
 
-      <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-4 sm:p-5">
+      <div className="app-dashed-panel p-4 sm:p-5">
         <h3 className="text-sm font-semibold text-slate-200">Quick reference</h3>
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 app-muted text-sm">
           Recommended order:{' '}
           <span className="text-slate-300">
             Unit Types → Type Hierarchy → Organization Units → Employees

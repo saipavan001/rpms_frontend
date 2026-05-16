@@ -14,11 +14,11 @@ const OrgUnitTypeCard = ({
   canWrite = true,
 }: OrgUnitTypeCardProps) => {
   return (
-    <article className="rounded-xl border border-white/10 bg-white/5 p-4">
+    <article className="app-card p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <p className="font-mono text-xs text-slate-400">{item.code}</p>
-          <h3 className="mt-1 truncate text-base font-semibold text-white">
+          <p className="font-mono app-muted text-xs">{item.code}</p>
+          <h3 className="mt-1 truncate app-card-title text-base">
             {item.name}
           </h3>
         </div>
@@ -34,7 +34,7 @@ const OrgUnitTypeCard = ({
       </div>
 
       {item.description && (
-        <p className="mt-3 line-clamp-2 text-sm text-slate-400">
+        <p className="mt-3 line-clamp-2 app-muted text-sm">
           {item.description}
         </p>
       )}
@@ -44,7 +44,7 @@ const OrgUnitTypeCard = ({
           <button
             type="button"
             onClick={() => onEdit(item)}
-            className="flex-1 rounded-lg border border-white/10 py-2 text-sm font-medium text-slate-200 hover:bg-white/10"
+            className="app-btn-ghost flex-1 py-2 text-sm"
           >
             Edit
           </button>

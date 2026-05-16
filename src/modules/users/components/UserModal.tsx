@@ -30,7 +30,7 @@ const emptyValues: UserFormValues = {
 };
 
 const inputClass =
-  'w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-base text-white outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm';
+  'app-input';
 
 const getRoleDisplayName = (role: Role, hasEmployee: boolean) => {
   if (hasEmployee && role.code === ROLE_CODES.ADMIN) {
@@ -92,10 +92,10 @@ const UserModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4">
-      <div className="flex max-h-[92dvh] w-full flex-col rounded-t-2xl border border-white/10 bg-slate-900 shadow-2xl sm:max-h-[90vh] sm:max-w-lg sm:rounded-2xl">
-        <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-4 sm:px-6">
-          <h2 className="pr-4 text-lg font-semibold text-white sm:text-xl">
+    <div className="app-modal-overlay">
+      <div className="app-modal-panel">
+        <div className="flex shrink-0 items-center justify-between app-sidebar-brand border-b px-4 py-4 sm:px-6">
+          <h2 className="pr-4 app-heading text-lg sm:text-xl">
             {title}
           </h2>
           <button type="button" onClick={onClose} className="text-slate-400">
@@ -109,7 +109,7 @@ const UserModal = ({
         >
           <div className="space-y-4">
             <div>
-              <label className="mb-2 block text-sm text-slate-200">
+              <label className="mb-2 block app-label text-sm">
                 Username
               </label>
               <input
@@ -124,7 +124,7 @@ const UserModal = ({
             </div>
 
             <div>
-              <label className="mb-2 block text-sm text-slate-200">
+              <label className="mb-2 block app-label text-sm">
                 Password {isEdit && '(leave blank to keep current)'}
               </label>
               <input
@@ -139,7 +139,7 @@ const UserModal = ({
             </div>
 
             <div>
-              <label className="mb-2 block text-sm text-slate-200">
+              <label className="mb-2 block app-label text-sm">
                 Link to employee
               </label>
               <select
@@ -156,7 +156,7 @@ const UserModal = ({
                   </option>
                 ))}
               </select>
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 app-muted text-xs">
                 {hasEmployee
                   ? 'Choose Administrator or Employee account. Guest is not available for linked employees.'
                   : 'Without an employee link, choose Administrator or Guest (read-only).'}
@@ -164,10 +164,10 @@ const UserModal = ({
             </div>
 
             <div>
-              <span className="mb-2 block text-sm font-medium text-slate-200">
+              <span className="mb-2 block app-label text-sm font-medium">
                 {getAccountTypeLabel(values.employee_id)}
               </span>
-              <div className="space-y-2 rounded-xl border border-white/10 bg-white/5 p-3">
+              <div className="app-card space-y-2 p-3">
                 {availableRoles.length === 0 && (
                   <p className="text-sm text-amber-300">
                     No account types available. Run{' '}
@@ -191,7 +191,7 @@ const UserModal = ({
                       <span className="font-medium">
                         {getRoleDisplayName(role, hasEmployee)}
                       </span>
-                      <span className="block text-xs text-slate-400">
+                      <span className="block app-muted text-xs">
                         {role.description}
                       </span>
                     </div>
@@ -200,7 +200,7 @@ const UserModal = ({
               </div>
             </div>
 
-            <label className="flex items-center gap-3 text-sm text-slate-200">
+            <label className="app-label flex items-center gap-3 text-sm">
               <input
                 type="checkbox"
                 checked={values.is_active}
@@ -212,18 +212,18 @@ const UserModal = ({
             </label>
           </div>
 
-          <div className="mt-6 flex flex-col-reverse gap-3 border-t border-white/10 pt-4 sm:flex-row sm:justify-end">
+          <div className="mt-6 flex flex-col-reverse gap-3 app-divider border-t pt-4 sm:flex-row sm:justify-end">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-white/10 px-4 py-2 text-slate-300"
+              className="app-btn-secondary px-4 py-2 text-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading || values.role_codes.length === 0}
-              className="rounded-xl bg-blue-600 px-4 py-2 font-semibold text-white disabled:opacity-60"
+              className="app-btn-primary px-4 py-2 text-sm"
             >
               {loading ? 'Saving...' : submitLabel}
             </button>

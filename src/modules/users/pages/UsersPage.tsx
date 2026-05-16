@@ -111,8 +111,8 @@ const UsersPage = () => {
     <div className="space-y-5 sm:space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white sm:text-3xl">Users</h1>
-          <p className="mt-1 text-sm text-slate-400">
+          <h1 className="app-page-title">Users</h1>
+          <p className="mt-1 app-muted text-sm">
             Link an employee for Administrator or Employee accounts; leave
             unlinked for Administrator or Guest (read-only).
           </p>
@@ -123,14 +123,14 @@ const UsersPage = () => {
             setSelectedItem(null);
             setModalMode('create');
           }}
-          className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700"
+          className="app-btn-primary px-5 py-3 text-sm"
         >
           + Add User
         </button>
       </div>
 
       {error && (
-        <div className="rounded-xl border border-amber-500/30 bg-amber-500/15 px-4 py-3 text-sm text-amber-200">
+        <div className="app-alert-warning">
           {error}
         </div>
       )}
@@ -138,10 +138,10 @@ const UsersPage = () => {
       {loading ? (
         <p className="text-center text-slate-400">Loading...</p>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+        <div className="app-table-wrap">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-white/10 bg-white/5 text-slate-300">
+              <thead className="app-table-head">
                 <tr>
                   <th className="px-4 py-3">Username</th>
                   <th className="px-4 py-3">Employee</th>
@@ -152,7 +152,7 @@ const UsersPage = () => {
               </thead>
               <tbody>
                 {items.map((user) => (
-                  <tr key={user.id} className="border-b border-white/5 text-slate-200">
+                  <tr key={user.id} className="app-table-row">
                     <td className="px-4 py-3">{user.username}</td>
                     <td className="px-4 py-3">
                       {user.employee
@@ -172,7 +172,7 @@ const UsersPage = () => {
                           setSelectedItem(user);
                           setModalMode('edit');
                         }}
-                        className="mr-2 rounded-lg border border-white/10 px-3 py-1 text-xs"
+                        className="app-btn-ghost mr-2 px-3 py-1 text-xs"
                       >
                         Edit
                       </button>

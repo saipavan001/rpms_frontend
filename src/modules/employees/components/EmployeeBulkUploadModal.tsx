@@ -70,16 +70,16 @@ const EmployeeBulkUploadModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4">
+    <div className="app-modal-overlay">
       <div className="flex max-h-[92dvh] w-full flex-col rounded-t-2xl border border-white/10 bg-slate-900 shadow-2xl sm:max-h-[90vh] sm:max-w-3xl sm:rounded-2xl">
-        <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-4 sm:px-6">
-          <h2 className="pr-4 text-lg font-semibold text-white sm:text-xl">
+        <div className="flex shrink-0 items-center justify-between app-sidebar-brand border-b px-4 py-4 sm:px-6">
+          <h2 className="pr-4 app-heading text-lg sm:text-xl">
             Bulk upload employees
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
+            className="app-btn-icon flex h-9 w-9 shrink-0"
             aria-label="Close"
           >
             ✕
@@ -88,7 +88,7 @@ const EmployeeBulkUploadModal = ({
 
         <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 py-4 sm:px-6">
           <div className="space-y-4">
-            <p className="text-sm text-slate-400">
+            <p className="app-muted text-sm">
               Upload a CSV with columns: employee_code, employee_name,
               email_official, email_personal, phone_number, employment_type,
               joining_date, ou_code, is_active. Organization unit codes must
@@ -103,7 +103,7 @@ const EmployeeBulkUploadModal = ({
               >
                 Download template
               </button>
-              <label className="flex flex-1 cursor-pointer items-center justify-center rounded-xl border border-dashed border-white/20 bg-white/5 px-4 py-2.5 text-sm text-slate-300 hover:bg-white/10">
+              <label className="flex flex-1 cursor-pointer items-center justify-center rounded-xl border border-dashed border-white/20 bg-white/5 px-4 py-2.5 app-label text-sm hover:bg-white/10">
                 {fileName || 'Choose CSV file'}
                 <input
                   type="file"
@@ -115,7 +115,7 @@ const EmployeeBulkUploadModal = ({
             </div>
 
             {parseErrors.length > 0 && (
-              <div className="rounded-xl border border-amber-500/30 bg-amber-500/15 px-4 py-3 text-sm text-amber-200">
+              <div className="app-alert-warning">
                 <ul className="list-disc space-y-1 pl-5">
                   {parseErrors.map((error) => (
                     <li key={error}>{error}</li>
@@ -128,7 +128,7 @@ const EmployeeBulkUploadModal = ({
               <div className="overflow-hidden rounded-xl border border-white/10">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs sm:text-sm">
-                    <thead className="border-b border-white/10 bg-white/5 text-slate-300">
+                    <thead className="app-table-head">
                       <tr>
                         <th className="px-3 py-2">Row</th>
                         <th className="px-3 py-2">Code</th>
@@ -141,7 +141,7 @@ const EmployeeBulkUploadModal = ({
                       {previewRows.map((row) => (
                         <tr
                           key={row.rowNumber}
-                          className="border-b border-white/5 text-slate-200"
+                          className="app-table-row"
                         >
                           <td className="px-3 py-2">{row.rowNumber}</td>
                           <td className="px-3 py-2 font-mono">
@@ -155,18 +155,18 @@ const EmployeeBulkUploadModal = ({
                     </tbody>
                   </table>
                 </div>
-                <p className="border-t border-white/10 px-3 py-2 text-xs text-slate-400">
+                <p className="border-t border-white/10 px-3 py-2 app-muted text-xs">
                   {previewRows.length} row(s) ready to upload
                 </p>
               </div>
             )}
           </div>
 
-          <div className="mt-6 flex shrink-0 flex-col-reverse gap-3 border-t border-white/10 pt-4 sm:flex-row sm:justify-end">
+          <div className="mt-6 flex shrink-0 flex-col-reverse gap-3 app-divider border-t pt-4 sm:flex-row sm:justify-end">
             <button
               type="button"
               onClick={onClose}
-              className="w-full rounded-xl border border-white/10 px-4 py-3 text-sm font-medium text-slate-300 hover:bg-white/10 sm:w-auto sm:py-2"
+              className="app-btn-secondary w-full px-4 py-3 text-sm sm:w-auto sm:py-2"
             >
               Cancel
             </button>
@@ -174,7 +174,7 @@ const EmployeeBulkUploadModal = ({
               type="button"
               onClick={handleUpload}
               disabled={loading || uploading || previewRows.length === 0}
-              className="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 sm:w-auto sm:py-2"
+              className="app-btn-primary w-full px-4 py-3 text-sm sm:w-auto sm:py-2"
             >
               {uploading ? 'Uploading...' : 'Upload employees'}
             </button>

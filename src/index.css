@@ -1,9 +1,412 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 html {
   -webkit-tap-highlight-color: transparent;
+  --app-topbar-height: 4rem;
+  --app-sidebar-width: 16rem;
 }
 
 body {
   overflow-x: hidden;
+  @apply bg-slate-50 text-slate-900 antialiased;
+}
+
+.dark body {
+  @apply bg-slate-900 text-slate-100;
+}
+
+@layer components {
+  .app-shell {
+    @apply h-[100dvh] overflow-hidden bg-gradient-to-br from-slate-100 via-slate-50 to-slate-200;
+  }
+
+  .dark .app-shell {
+    @apply from-slate-900 via-slate-800 to-slate-900;
+  }
+
+  .app-header {
+    @apply border-b border-slate-200/80 bg-white/95 backdrop-blur-xl;
+  }
+
+  .dark .app-header {
+    @apply border-white/10 bg-slate-900/95;
+  }
+
+  .app-topbar {
+    @apply border-b border-slate-200/80 bg-white shadow-sm;
+    height: var(--app-topbar-height, 4rem);
+  }
+
+  .dark .app-topbar {
+    @apply border-white/10 bg-slate-900 shadow-md shadow-black/20;
+  }
+
+  .app-topbar-role {
+    @apply border border-slate-200/80 bg-slate-100 text-slate-600;
+  }
+
+  .dark .app-topbar-role {
+    @apply border-white/10 bg-white/5 text-slate-300;
+  }
+
+  .app-sidebar {
+    @apply border-r border-slate-200/80 bg-white;
+  }
+
+  .dark .app-sidebar {
+    @apply border-white/10 bg-slate-900;
+  }
+
+  .app-sidebar-fixed {
+    width: var(--app-sidebar-width, 16rem);
+    top: var(--app-topbar-height, 4rem);
+  }
+
+  .app-main-scroll {
+    margin-top: var(--app-topbar-height, 4rem);
+    height: calc(100dvh - var(--app-topbar-height, 4rem));
+    @apply overflow-x-hidden overflow-y-auto;
+  }
+
+  @media (min-width: 1024px) {
+    .app-main-scroll {
+      margin-left: var(--app-sidebar-width, 16rem);
+      width: calc(100% - var(--app-sidebar-width, 16rem));
+    }
+  }
+
+  .app-drawer-backdrop {
+    @apply fixed inset-0 z-40 bg-black/40 lg:hidden;
+    top: var(--app-topbar-height, 4rem);
+  }
+
+  .app-sidebar-brand {
+    @apply border-b border-slate-200/80;
+  }
+
+  .dark .app-sidebar-brand {
+    @apply border-white/10;
+  }
+
+  .app-sidebar-footer {
+    @apply border-t border-slate-200/80;
+  }
+
+  .dark .app-sidebar-footer {
+    @apply border-white/10;
+  }
+
+  .app-brand-title {
+    @apply font-bold text-slate-900;
+  }
+
+  .dark .app-brand-title {
+    @apply text-white;
+  }
+
+  .app-page-title {
+    @apply text-2xl font-bold text-slate-900 sm:text-3xl;
+  }
+
+  .dark .app-page-title {
+    @apply text-white;
+  }
+
+  .app-heading {
+    @apply font-semibold text-slate-900;
+  }
+
+  .dark .app-heading {
+    @apply text-white;
+  }
+
+  .app-muted {
+    @apply text-slate-600;
+  }
+
+  .dark .app-muted {
+    @apply text-slate-400;
+  }
+
+  .app-label {
+    @apply text-slate-700;
+  }
+
+  .dark .app-label {
+    @apply text-slate-300;
+  }
+
+  .app-nav-section {
+    @apply text-slate-500;
+  }
+
+  .dark .app-nav-section {
+    @apply text-slate-500;
+  }
+
+  .app-nav-link {
+    @apply text-slate-600 hover:bg-slate-200/80 hover:text-slate-900;
+  }
+
+  .dark .app-nav-link {
+    @apply text-slate-300 hover:bg-white/10 hover:text-white;
+  }
+
+  .app-nav-link-header {
+    @apply text-slate-600 hover:bg-slate-200/80 hover:text-slate-900;
+  }
+
+  .dark .app-nav-link-header {
+    @apply text-slate-300 hover:bg-white/10 hover:text-white;
+  }
+
+  .app-card {
+    @apply rounded-xl border border-slate-200/80 bg-white/80 shadow-sm;
+  }
+
+  .dark .app-card {
+    @apply border-white/10 bg-white/5 shadow-none;
+  }
+
+  .app-card-title {
+    @apply font-semibold text-slate-900;
+  }
+
+  .dark .app-card-title {
+    @apply text-white;
+  }
+
+  .app-input {
+    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 sm:text-sm;
+  }
+
+  .dark .app-input {
+    @apply border-white/10 bg-white/10 text-white placeholder:text-slate-400;
+  }
+
+  .app-select {
+    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-blue-500;
+  }
+
+  .dark .app-select {
+    @apply border-white/10 bg-white/10 text-white;
+  }
+
+  .app-select-option {
+    @apply bg-white text-slate-900;
+  }
+
+  .dark .app-select-option {
+    @apply bg-slate-900 text-white;
+  }
+
+  .app-btn-primary {
+    @apply rounded-xl bg-blue-600 font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-60;
+  }
+
+  .app-btn-secondary {
+    @apply rounded-xl border border-slate-300 font-semibold text-slate-700 transition-colors hover:bg-slate-100;
+  }
+
+  .dark .app-btn-secondary {
+    @apply border-white/10 text-slate-200 hover:bg-white/10;
+  }
+
+  .app-btn-ghost {
+    @apply rounded-lg border border-slate-300 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100;
+  }
+
+  .dark .app-btn-ghost {
+    @apply border-white/10 text-slate-300 hover:bg-white/10 hover:text-white;
+  }
+
+  .app-btn-icon {
+    @apply inline-flex items-center justify-center rounded-lg border border-slate-300 text-slate-600 transition-colors hover:bg-slate-100;
+  }
+
+  .dark .app-btn-icon {
+    @apply border-white/10 text-slate-200 hover:bg-white/10;
+  }
+
+  .app-logo-box {
+    @apply flex items-center justify-center rounded-xl border border-slate-200/80 bg-slate-100;
+  }
+
+  .dark .app-logo-box {
+    @apply border-white/10 bg-white/10;
+  }
+
+  .app-logo-letter {
+    @apply font-bold text-slate-800;
+  }
+
+  .dark .app-logo-letter {
+    @apply text-white;
+  }
+
+  .app-modal-overlay {
+    @apply fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4;
+  }
+
+  .dark .app-modal-overlay {
+    @apply bg-black/60;
+  }
+
+  .app-modal-panel {
+    @apply flex max-h-[92dvh] w-full flex-col rounded-t-2xl border border-slate-200 bg-white shadow-2xl sm:max-h-[90vh] sm:max-w-lg sm:rounded-2xl;
+  }
+
+  .dark .app-modal-panel {
+    @apply border-white/10 bg-slate-900;
+  }
+
+  .app-modal-header {
+    @apply flex shrink-0 items-center justify-between border-b border-slate-200 px-4 py-4 sm:px-6;
+  }
+
+  .dark .app-modal-header {
+    @apply border-white/10;
+  }
+
+  .app-modal-body {
+    @apply flex-1 overflow-y-auto px-4 py-4 sm:px-6;
+  }
+
+  .app-modal-footer {
+    @apply flex shrink-0 gap-2 border-t border-slate-200 px-4 py-4 sm:px-6;
+  }
+
+  .dark .app-modal-footer {
+    @apply border-white/10;
+  }
+
+  .app-alert-warning {
+    @apply rounded-xl border border-amber-500/40 bg-amber-50 px-4 py-3 text-sm text-amber-900;
+  }
+
+  .dark .app-alert-warning {
+    @apply border-amber-500/30 bg-amber-500/15 text-amber-200;
+  }
+
+  .app-alert-success {
+    @apply rounded-xl border border-emerald-500/40 bg-emerald-50 px-4 py-3 text-sm text-emerald-900;
+  }
+
+  .dark .app-alert-success {
+    @apply border-emerald-500/30 bg-emerald-500/15 text-emerald-200;
+  }
+
+  .app-alert-info {
+    @apply rounded-xl border border-blue-500/40 bg-blue-50 px-4 py-3 text-sm text-blue-900;
+  }
+
+  .dark .app-alert-info {
+    @apply border-blue-500/30 bg-blue-500/10 text-blue-200;
+  }
+
+  .app-stat-tile {
+    @apply rounded-xl border border-slate-200/80 bg-white/90 px-4 py-3 shadow-sm;
+  }
+
+  .dark .app-stat-tile {
+    @apply border-white/10 bg-white/5 shadow-none;
+  }
+
+  .app-progress-track {
+    @apply h-2 overflow-hidden rounded-full bg-slate-200;
+  }
+
+  .dark .app-progress-track {
+    @apply bg-white/10;
+  }
+
+  .app-divider {
+    @apply border-t border-slate-200;
+  }
+
+  .dark .app-divider {
+    @apply border-white/10;
+  }
+
+  .app-dashed-panel {
+    @apply rounded-2xl border border-dashed border-slate-300 bg-slate-50/80;
+  }
+
+  .dark .app-dashed-panel {
+    @apply border-white/15 bg-white/[0.02];
+  }
+
+  .app-auth-shell {
+    @apply flex min-h-screen min-h-[100dvh] items-center justify-center bg-gradient-to-br from-slate-100 via-slate-50 to-slate-200 px-4 py-6 sm:py-8;
+  }
+
+  .dark .app-auth-shell {
+    @apply from-slate-900 via-slate-800 to-slate-900;
+  }
+
+  .app-auth-card {
+    @apply rounded-2xl border border-slate-200/80 bg-white/90 p-5 shadow-xl backdrop-blur-xl sm:rounded-3xl sm:p-8;
+  }
+
+  .dark .app-auth-card {
+    @apply border-white/10 bg-white/10 shadow-2xl;
+  }
+
+  .app-auth-tabs {
+    @apply mb-6 flex rounded-xl border border-slate-200 bg-slate-100/80 p-1;
+  }
+
+  .dark .app-auth-tabs {
+    @apply border-white/10 bg-white/5;
+  }
+
+  .app-auth-tab {
+    @apply flex-1 rounded-lg py-2.5 text-sm font-medium text-slate-500 transition-colors;
+  }
+
+  .app-auth-tab-active {
+    @apply bg-blue-600 text-white;
+  }
+
+  .app-auth-tab-inactive {
+    @apply hover:text-slate-800;
+  }
+
+  .dark .app-auth-tab-inactive {
+    @apply text-slate-400 hover:text-white;
+  }
+
+  .app-loading {
+    @apply rounded-2xl border border-slate-200 bg-white/80 p-8 text-center text-slate-500;
+  }
+
+  .dark .app-loading {
+    @apply border-white/10 bg-white/5 text-slate-400;
+  }
+
+  .app-table-wrap {
+    @apply overflow-x-auto rounded-xl border border-slate-200/80 bg-white/90;
+  }
+
+  .dark .app-table-wrap {
+    @apply border-white/10 bg-white/5;
+  }
+
+  .app-table-head {
+    @apply border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wide text-slate-600;
+  }
+
+  .dark .app-table-head {
+    @apply border-white/10 bg-white/5 text-slate-400;
+  }
+
+  .app-table-row {
+    @apply border-b border-slate-100 text-sm text-slate-700;
+  }
+
+  .dark .app-table-row {
+    @apply border-white/5 text-slate-300;
+  }
 }

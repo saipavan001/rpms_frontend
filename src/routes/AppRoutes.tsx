@@ -21,6 +21,7 @@ import OrganizationUnitsPage from '../modules/organization-units/pages/Organizat
 import EmployeesPage from '../modules/employees/pages/EmployeesPage';
 import UsersPage from '../modules/users/pages/UsersPage';
 import EmployeeWelcomePage from '../modules/employee-portal/pages/EmployeeWelcomePage';
+import AuditLogsPage from '../modules/audit-logs/pages/AuditLogsPage';
 
 const AppRoutes = () => {
   return (
@@ -88,6 +89,14 @@ const AppRoutes = () => {
             element={
               <RoleRoute allow={canManageUsers}>
                 <UsersPage />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="/audit-logs"
+            element={
+              <RoleRoute allow={canManageUsers}>
+                <AuditLogsPage />
               </RoleRoute>
             }
           />

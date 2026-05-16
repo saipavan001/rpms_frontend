@@ -168,10 +168,10 @@ const OrgUnitTypeHierarchiesPage = () => {
     <div className="space-y-5 sm:space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white sm:text-3xl">
+          <h1 className="app-page-title">
             Org Unit Type Hierarchy
           </h1>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 app-muted text-sm">
             Define allowed parent–child relationships between organization unit types
           </p>
         </div>
@@ -184,7 +184,7 @@ const OrgUnitTypeHierarchiesPage = () => {
               setModalMode('create');
             }}
             disabled={activeOuTypes.length < 2}
-            className="w-full rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-60 sm:w-auto sm:py-2.5"
+            className="app-btn-primary w-full px-5 py-3 text-sm sm:w-auto sm:py-2.5"
           >
             + Add Hierarchy
           </button>
@@ -194,32 +194,32 @@ const OrgUnitTypeHierarchiesPage = () => {
       {!canWrite && <ViewOnlyBanner />}
 
       {!loading && ouTypes.length < 2 && (
-        <div className="rounded-xl border border-amber-500/30 bg-amber-500/15 px-4 py-3 text-sm text-amber-200">
+        <div className="app-alert-warning">
           Create at least two organization unit types before defining hierarchies.
         </div>
       )}
 
       {!loading && ouTypes.length >= 2 && activeOuTypes.length < 2 && (
-        <div className="rounded-xl border border-amber-500/30 bg-amber-500/15 px-4 py-3 text-sm text-amber-200">
+        <div className="app-alert-warning">
           You have {ouTypes.length} organization unit type(s), but fewer than two
           are active. Activate at least two types to add a hierarchy.
         </div>
       )}
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-        <label className="text-sm text-slate-300">Filter</label>
+        <label className="app-label text-sm">Filter</label>
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value as FilterValue)}
-          className="w-full rounded-xl border border-white/10 bg-white/10 px-4 py-2.5 text-sm text-white outline-none focus:ring-2 focus:ring-blue-500 sm:w-auto"
+          className="app-select sm:w-auto"
         >
-          <option value="all" className="bg-slate-900">
+          <option value="all" className="app-select-option">
             All
           </option>
-          <option value="active" className="bg-slate-900">
+          <option value="active" className="app-select-option">
             Active only
           </option>
-          <option value="inactive" className="bg-slate-900">
+          <option value="inactive" className="app-select-option">
             Inactive only
           </option>
         </select>
@@ -228,18 +228,18 @@ const OrgUnitTypeHierarchiesPage = () => {
       {error && (
         <div
           role="alert"
-          className="rounded-xl border border-amber-500/30 bg-amber-500/15 px-4 py-3 text-sm text-amber-200"
+          className="app-alert-warning"
         >
           {error}
         </div>
       )}
 
       {loading ? (
-        <p className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-slate-400">
+        <p className="app-card rounded-2xl p-8 text-center text-slate-400">
           Loading...
         </p>
       ) : items.length === 0 ? (
-        <p className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-slate-400">
+        <p className="app-card rounded-2xl p-8 text-center text-slate-400">
           No organization unit type hierarchies found.
         </p>
       ) : (
@@ -259,10 +259,10 @@ const OrgUnitTypeHierarchiesPage = () => {
             ))}
           </div>
 
-          <div className="hidden overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl md:block">
+          <div className="app-table-wrap hidden backdrop-blur-xl md:block">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="border-b border-white/10 bg-white/5 text-slate-300">
+                <thead className="app-table-head">
                   <tr>
                     <th className="px-4 py-3 font-medium">Parent type</th>
                     <th className="px-4 py-3 font-medium">Child type</th>
@@ -277,16 +277,16 @@ const OrgUnitTypeHierarchiesPage = () => {
                   {items.map((item) => (
                     <tr
                       key={item.id}
-                      className="border-b border-white/5 text-slate-200 last:border-0 hover:bg-white/5"
+                      className="app-table-row last:border-0 hover:bg-slate-50 dark:hover:bg-white/5"
                     >
                       <td className="px-4 py-3">
-                        <span className="font-mono text-xs text-slate-400">
+                        <span className="font-mono app-muted text-xs">
                           {item.parent_ou_type.code}
                         </span>
                         <span className="ml-2">{item.parent_ou_type.name}</span>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="font-mono text-xs text-slate-400">
+                        <span className="font-mono app-muted text-xs">
                           {item.child_ou_type.code}
                         </span>
                         <span className="ml-2">{item.child_ou_type.name}</span>
@@ -314,7 +314,7 @@ const OrgUnitTypeHierarchiesPage = () => {
                                 setSelectedItem(item);
                                 setModalMode('edit');
                               }}
-                              className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-white/10"
+                              className="app-btn-ghost px-3 py-1.5 text-xs"
                             >
                               Edit
                             </button>

@@ -14,17 +14,17 @@ const EmployeeCard = ({
   canWrite = true,
 }: EmployeeCardProps) => {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+    <div className="app-card p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <p className="font-mono text-xs text-slate-400">{item.employee_code}</p>
-          <h3 className="mt-1 truncate text-base font-semibold text-white">
+          <p className="font-mono app-muted text-xs">{item.employee_code}</p>
+          <h3 className="mt-1 truncate app-card-title text-base">
             {item.employee_name}
           </h3>
-          <p className="mt-1 truncate text-xs text-slate-400">
+          <p className="mt-1 truncate app-muted text-xs">
             {item.email_official}
           </p>
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-1 app-muted text-xs">
             {item.organization_unit.name} · {item.employment_type}
           </p>
         </div>
@@ -44,7 +44,7 @@ const EmployeeCard = ({
           <button
             type="button"
             onClick={() => onEdit(item)}
-            className="flex-1 rounded-lg border border-white/10 py-2 text-sm font-medium text-slate-200 hover:bg-white/10"
+            className="app-btn-ghost flex-1 py-2 text-sm"
           >
             Edit
           </button>
