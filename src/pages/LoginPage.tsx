@@ -53,23 +53,23 @@ const LoginPage = () => {
 
   return (
 
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4">
+    <div className="flex min-h-screen min-h-[100dvh] items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-4 py-6 sm:py-8">
 
       <div className="w-full max-w-md">
 
-        <div className="bg-white/10 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl p-8">
+        <div className="rounded-2xl border border-white/10 bg-white/10 p-5 shadow-2xl backdrop-blur-xl sm:rounded-3xl sm:p-8">
 
           <div className="text-center mb-8">
 
-            <div className="w-20 h-20 rounded-2xl bg-white/10 mx-auto flex items-center justify-center mb-5 border border-white/10">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/10 sm:mb-5 sm:h-20 sm:w-20">
 
-              <span className="text-3xl font-bold text-white">
+              <span className="text-2xl font-bold text-white sm:text-3xl">
                 R
               </span>
 
             </div>
 
-            <h1 className="text-4xl font-bold text-white mb-2">
+            <h1 className="mb-2 text-3xl font-bold text-white sm:text-4xl">
               RPMS
             </h1>
 
@@ -95,7 +95,7 @@ const LoginPage = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter username"
-                className="w-full rounded-xl border border-white/10 bg-white/10 text-white placeholder:text-slate-400 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                className="w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-base text-white placeholder:text-slate-400 outline-none transition-all focus:ring-2 focus:ring-blue-500 sm:text-sm"
                 required
               />
 
@@ -112,7 +112,7 @@ const LoginPage = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter password"
-                className="w-full rounded-xl border border-white/10 bg-white/10 text-white placeholder:text-slate-400 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                className="w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-base text-white placeholder:text-slate-400 outline-none transition-all focus:ring-2 focus:ring-blue-500 sm:text-sm"
                 required
               />
 
@@ -135,7 +135,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-all duration-200 disabled:opacity-60"
+              className="w-full rounded-xl bg-blue-600 py-3.5 text-base font-semibold text-white transition-all duration-200 hover:bg-blue-700 disabled:opacity-60 sm:py-3 sm:text-sm"
             >
               {
                 loading
