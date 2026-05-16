@@ -53,24 +53,32 @@ const OrgUnitTypeHierarchiesPage = () => {
   );
 
   const loadItems = useCallback(async () => {
+    setLoading(true);
+    setError('');
+
+    const isActive =
+      filter === 'all' ? undefined : filter === 'active';
+
     try {
-      setLoading(true);
-      setError('');
-
-      const isActive =
-        filter === 'all' ? undefined : filter === 'active';
-
-      const [hierarchies, types] = await Promise.all([
-        getOrgUnitTypeHierarchies(isActive),
-        getOrgUnitTypes(true),
-      ]);
-
-      setItems(hierarchies);
+      const types = await getOrgUnitTypes();
       setOuTypes(types);
     } catch (err) {
+      setOuTypes([]);
       setError(
-        getApiErrorMessage(err, 'Failed to load organization unit type hierarchies.')
+        getApiErrorMessage(err, 'Failed to load organization unit types.')
       );
+    }
+
+    try {
+      const hierarchies = await getOrgUnitTypeHierarchies(isActive);
+      setItems(hierarchies);
+    } catch (err) {
+      setItems([]);
+      const hierarchyError = getApiErrorMessage(
+        err,
+        'Failed to load organization unit type hierarchies.'
+      );
+      setError((current) => current || hierarchyError);
     } finally {
       setLoading(false);
     }
@@ -131,6 +139,8 @@ const OrgUnitTypeHierarchiesPage = () => {
     }
   };
 
+  const activeOuTypes = ouTypes.filter((type) => type.is_active);
+
   const handleDelete = async (item: OrgUnitTypeHierarchy) => {
     const confirmed = window.confirm(
       `Delete hierarchy "${item.parent_ou_type.name} → ${item.child_ou_type.name}"?`
@@ -169,16 +179,23 @@ const OrgUnitTypeHierarchiesPage = () => {
             setSelectedItem(null);
             setModalMode('create');
           }}
-          disabled={ouTypes.length < 2}
+          disabled={activeOuTypes.length < 2}
           className="w-full rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-60 sm:w-auto sm:py-2.5"
         >
           + Add Hierarchy
         </button>
       </div>
 
-      {ouTypes.length < 2 && !loading && (
+      {!loading && ouTypes.length < 2 && (
         <div className="rounded-xl border border-amber-500/30 bg-amber-500/15 px-4 py-3 text-sm text-amber-200">
           Create at least two organization unit types before defining hierarchies.
+        </div>
+      )}
+
+      {!loading && ouTypes.length >= 2 && activeOuTypes.length < 2 && (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/15 px-4 py-3 text-sm text-amber-200">
+          You have {ouTypes.length} organization unit type(s), but fewer than two
+          are active. Activate at least two types to add a hierarchy.
         </div>
       )}
 
@@ -313,7 +330,7 @@ const OrgUnitTypeHierarchiesPage = () => {
           title="Add Organization Unit Type Hierarchy"
           submitLabel="Create"
           loading={saving}
-          ouTypes={ouTypes}
+          ouTypes={activeOuTypes}
           onClose={() => setModalMode(null)}
           onSubmit={handleCreate}
         />
@@ -325,7 +342,7 @@ const OrgUnitTypeHierarchiesPage = () => {
           submitLabel="Save Changes"
           initialValues={toFormValues(selectedItem)}
           loading={saving}
-          ouTypes={ouTypes}
+          ouTypes={activeOuTypes}
           onClose={() => {
             setModalMode(null);
             setSelectedItem(null);

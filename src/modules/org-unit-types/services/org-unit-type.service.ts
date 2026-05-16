@@ -19,7 +19,7 @@ export const getOrgUnitTypes = async (
     { params }
   );
 
-  return response.data.data;
+  return response.data.data ?? [];
 };
 
 export const getOrgUnitTypeById = async (
