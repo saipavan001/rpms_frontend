@@ -42,7 +42,7 @@ const LoginPage = () => {
 
       localStorage.setItem('accessToken', token);
 
-      navigate('/dashboard');
+      navigate('/org-unit-types');
 
     } catch (error: unknown) {
       setWarning(getLoginErrorMessage(error));
