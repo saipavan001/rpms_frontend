@@ -6,6 +6,7 @@ import type { BulkCreateEmployeeResult, EmployeeCsvRow } from '../types/employee
 import {
   csvRowsToCreateInput,
   EMPLOYEE_CSV_TEMPLATE,
+  JOINING_DATE_FORMAT_HINT,
   parseEmployeeCsv,
 } from '../utils/parse-employee-csv';
 
@@ -91,7 +92,7 @@ const EmployeeBulkUploadModal = ({
               Upload a CSV with columns: employee_code, employee_name,
               email_official, email_personal, phone_number, employment_type,
               joining_date, ou_code, is_active. Organization unit codes must
-              already exist.
+              already exist. {JOINING_DATE_FORMAT_HINT}
             </p>
 
             <div className="flex flex-col gap-2 sm:flex-row">

@@ -1,5 +1,6 @@
 import type { OrganizationUnit } from '../../organization-units/types/organization-unit';
 import type { CreateEmployeeInput, EmployeeCsvRow } from '../types/employee';
+import { normalizeJoiningDate } from './parse-joining-date';
 
 const REQUIRED_HEADERS = [
   'employee_code',
@@ -52,8 +53,11 @@ const parseBoolean = (value: string, fallback = true): boolean => {
 
 export const EMPLOYEE_CSV_TEMPLATE = [
   'employee_code,employee_name,email_official,email_personal,phone_number,employment_type,joining_date,ou_code,is_active',
-  'EMP001,Jane Doe,jane@company.com,jane@gmail.com,+1234567890,FULL_TIME,2024-01-15,HQ,true',
+  'EMP001,Jane Doe,jane@company.com,jane@gmail.com,+1234567890,FULL_TIME,16-01-2016,HQ,true',
 ].join('\n');
+
+export const JOINING_DATE_FORMAT_HINT =
+  'Joining date: YYYY-MM-DD (e.g. 2016-01-16) or DD-MM-YYYY (e.g. 16-01-2016). Leave empty if not applicable.';
 
 export const parseEmployeeCsv = (
   content: string,
@@ -118,6 +122,15 @@ export const parseEmployeeCsv = (
       continue;
     }
 
+    const joiningDateRaw = record.joining_date ?? '';
+    const { iso: joining_date, error: joiningDateError } =
+      normalizeJoiningDate(joiningDateRaw);
+
+    if (joiningDateError) {
+      errors.push(`Row ${rowNumber}: ${joiningDateError}`);
+      continue;
+    }
+
     rows.push({
       rowNumber,
       employee_code,
@@ -126,7 +139,7 @@ export const parseEmployeeCsv = (
       email_personal: record.email_personal ?? '',
       phone_number: record.phone_number ?? '',
       employment_type,
-      joining_date: record.joining_date ?? '',
+      joining_date: joining_date ?? '',
       ou_code,
       is_active: parseBoolean(record.is_active ?? '', true),
     });
