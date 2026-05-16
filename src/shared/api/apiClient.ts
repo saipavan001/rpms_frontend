@@ -27,11 +27,7 @@ const processRefreshQueue = (error: unknown | null) => {
 };
 
 const refreshAccessToken = async () => {
-  await axios.post(
-    `${API_BASE_URL}/auth/refresh`,
-    {},
-    { withCredentials: true }
-  );
+  await apiClient.post('/auth/refresh');
 };
 
 const shouldSkipRefresh = (url?: string) => {
