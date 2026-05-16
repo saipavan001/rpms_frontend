@@ -1,32 +1,25 @@
-import axios, { isAxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 
 import { apiClient } from '../../../shared/api/apiClient';
 import type { ApiResponse } from '../../../shared/types/api';
 import type { AuthUser } from '../../../shared/auth/permissions';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-export type LoginApiResponse = {
+export type AuthSessionResponse = {
   success?: boolean;
   data?: {
-    token?: string;
     user?: AuthUser;
   };
 };
 
-export const extractAccessToken = (
-  response: LoginApiResponse
-): string | null => response.data?.token ?? null;
-
 export const extractAuthUser = (
-  response: LoginApiResponse
+  response: AuthSessionResponse
 ): AuthUser | null => response.data?.user ?? null;
 
 export const loginApi = async (username: string, password: string) => {
-  const response = await axios.post<LoginApiResponse>(
-    `${API_BASE_URL}/auth/login`,
-    { username, password }
-  );
+  const response = await apiClient.post<AuthSessionResponse>('/auth/login', {
+    username,
+    password,
+  });
 
   return response.data;
 };
@@ -38,12 +31,21 @@ export type EmployeeSignupInput = {
 };
 
 export const registerEmployeeApi = async (input: EmployeeSignupInput) => {
-  const response = await axios.post<LoginApiResponse>(
-    `${API_BASE_URL}/auth/register/employee`,
+  const response = await apiClient.post<AuthSessionResponse>(
+    '/auth/register/employee',
     input
   );
 
   return response.data;
+};
+
+export const refreshAuthSession = async (): Promise<AuthUser> => {
+  const response = await apiClient.post<ApiResponse<AuthUser>>('/auth/refresh');
+  return response.data.data;
+};
+
+export const logoutApi = async () => {
+  await apiClient.post('/auth/logout');
 };
 
 export const fetchCurrentUser = async (): Promise<AuthUser> => {

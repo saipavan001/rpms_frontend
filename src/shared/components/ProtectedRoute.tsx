@@ -8,11 +8,6 @@ type ProtectedRouteProps = {
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
-  const token = localStorage.getItem('accessToken');
-
-  if (!token) {
-    return <Navigate to="/" replace />;
-  }
 
   if (loading) {
     return (

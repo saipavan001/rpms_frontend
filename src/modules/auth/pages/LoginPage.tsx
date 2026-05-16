@@ -2,7 +2,6 @@
 import { useNavigate } from 'react-router-dom';
 
 import {
-  extractAccessToken,
   extractAuthUser,
   getLoginErrorMessage,
   getSignupErrorMessage,
@@ -22,14 +21,6 @@ const completeAuth = (
   setUser: ReturnType<typeof useAuth>['setUser'],
   navigate: ReturnType<typeof useNavigate>
 ) => {
-  const token = extractAccessToken(response);
-
-  if (!token) {
-    return 'Authentication succeeded but no access token was returned.';
-  }
-
-  localStorage.setItem('accessToken', token);
-
   const user = extractAuthUser(response);
   if (user) {
     setUser(user);
@@ -37,8 +28,7 @@ const completeAuth = (
     return null;
   }
 
-  navigate('/dashboard');
-  return null;
+  return 'Authentication succeeded but user profile was not returned.';
 };
 
 const LoginPage = () => {

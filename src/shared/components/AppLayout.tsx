@@ -33,8 +33,8 @@ const AppLayout = () => {
       ? [...erpNavItems, { to: '/users', label: 'Users' }]
       : [...erpNavItems];
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
   };
 
