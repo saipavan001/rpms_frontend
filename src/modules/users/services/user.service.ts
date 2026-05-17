@@ -36,3 +36,13 @@ export const deleteUser = async (id: string): Promise<User> => {
   const response = await apiClient.delete<ApiResponse<User>>(`/users/${id}`);
   return response.data.data;
 };
+
+export const setUserRoles = async (
+  id: string,
+  role_codes: string[]
+): Promise<User> => {
+  const response = await apiClient.put<ApiResponse<User>>(`/users/${id}/roles`, {
+    role_codes,
+  });
+  return response.data.data;
+};

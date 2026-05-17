@@ -5,11 +5,22 @@ import { sidebarNavLinkClass } from '../theme/classes';
 
 type SidebarNavProps = {
   canManageUsers: boolean;
+  canManageRpmsSettings?: boolean;
+  isResearcherEmployee?: boolean;
   onNavigate?: () => void;
 };
 
-const SidebarNav = ({ canManageUsers, onNavigate }: SidebarNavProps) => {
-  const groups = getSidebarNavGroups(canManageUsers);
+const SidebarNav = ({
+  canManageUsers,
+  canManageRpmsSettings = false,
+  isResearcherEmployee = false,
+  onNavigate,
+}: SidebarNavProps) => {
+  const groups = getSidebarNavGroups(
+    canManageUsers,
+    canManageRpmsSettings,
+    isResearcherEmployee
+  );
 
   return (
     <nav className="flex h-full min-h-0 flex-col">

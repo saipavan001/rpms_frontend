@@ -9,7 +9,14 @@ const employeeNavItems = [{ to: '/welcome', label: 'Home' }] as const;
 
 const AppLayout = () => {
   const navigate = useNavigate();
-  const { user, logout, canManageUsers, isEmployeePortalUser } = useAuth();
+  const {
+    user,
+    logout,
+    canManageUsers,
+    canManageRpmsSettings,
+    isEmployeePortalUser,
+    isResearcherEmployee,
+  } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -62,7 +69,12 @@ const AppLayout = () => {
           sidebarOpen ? 'translate-x-0' : '-translate-x-full',
         ].join(' ')}
       >
-        <SidebarNav canManageUsers={canManageUsers} onNavigate={closeSidebar} />
+        <SidebarNav
+          canManageUsers={canManageUsers}
+          canManageRpmsSettings={canManageRpmsSettings}
+          isResearcherEmployee={isResearcherEmployee}
+          onNavigate={closeSidebar}
+        />
       </aside>
 
       <main className="app-main-scroll">

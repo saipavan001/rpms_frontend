@@ -1,10 +1,11 @@
 import { Navigate } from 'react-router-dom';
 
 import { useAuth } from '../context/AuthContext';
+import type { AuthUser } from '../auth/permissions';
 
 type RoleRouteProps = {
   children: React.ReactNode;
-  allow: (roles: string[]) => boolean;
+  allow: (user: AuthUser) => boolean;
   redirectTo?: string;
 };
 
@@ -23,7 +24,7 @@ const RoleRoute = ({
     );
   }
 
-  if (!user || !allow(user.roles)) {
+  if (!user || !allow(user)) {
     return <Navigate to={redirectTo} replace />;
   }
 

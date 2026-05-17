@@ -82,8 +82,20 @@ const UserModal = ({
     }));
   };
 
-  const selectRole = (code: string) => {
-    setValues((prev) => ({ ...prev, role_codes: [code] }));
+  const toggleRole = (code: string) => {
+    setValues((prev) => {
+      const has = prev.role_codes.includes(code);
+      if (has) {
+        return { ...prev, role_codes: prev.role_codes.filter((c) => c !== code) };
+      }
+      if (code === ROLE_CODES.GUEST) {
+        return { ...prev, role_codes: [code] };
+      }
+      return {
+        ...prev,
+        role_codes: [...prev.role_codes.filter((c) => c !== ROLE_CODES.GUEST), code],
+      };
+    });
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -158,47 +170,52 @@ const UserModal = ({
               </select>
               <p className="mt-1 app-muted text-xs">
                 {hasEmployee
-                  ? 'Choose Administrator or Employee account. Guest is not available for linked employees.'
-                  : 'Without an employee link, choose Administrator or Guest (read-only).'}
+                  ? 'You can assign multiple roles (e.g. Employee + Researcher). Guest is not available.'
+                  : 'Administrative login. Guest cannot be combined with other roles.'}
               </p>
             </div>
 
-            <div>
-              <span className="mb-2 block app-label text-sm font-medium">
-                {getAccountTypeLabel(values.employee_id)}
-              </span>
-              <div className="app-card space-y-2 p-3">
-                {availableRoles.length === 0 && (
-                  <p className="text-sm text-amber-300">
-                    No account types available. Run{' '}
-                    <code className="rounded bg-black/30 px-1">npm run seed</code>{' '}
-                    on the backend.
-                  </p>
-                )}
-                {availableRoles.map((role) => (
-                  <label
-                    key={role.id}
-                    className="flex cursor-pointer items-start gap-3 text-sm text-slate-200"
-                  >
-                    <input
-                      type="radio"
-                      name="account_type"
-                      checked={values.role_codes[0] === role.code}
-                      onChange={() => selectRole(role.code)}
-                      className="mt-0.5 h-4 w-4"
-                    />
-                    <div>
-                      <span className="font-medium">
-                        {getRoleDisplayName(role, hasEmployee)}
-                      </span>
-                      <span className="block app-muted text-xs">
-                        {role.description}
-                      </span>
-                    </div>
-                  </label>
-                ))}
+            {isEdit ? (
+              <div>
+                <span className="mb-2 block app-label text-sm font-medium">
+                  {getAccountTypeLabel(values.employee_id)}
+                </span>
+                <div className="app-card space-y-2 p-3">
+                  {availableRoles.length === 0 && (
+                    <p className="text-sm text-amber-300">
+                      No account types available. Run{' '}
+                      <code className="rounded bg-black/30 px-1">npm run seed</code>{' '}
+                      on the backend.
+                    </p>
+                  )}
+                  {availableRoles.map((role) => (
+                    <label
+                      key={role.id}
+                      className="flex cursor-pointer items-start gap-3 text-sm text-slate-200"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={values.role_codes.includes(role.code)}
+                        onChange={() => toggleRole(role.code)}
+                        className="mt-0.5 h-4 w-4"
+                      />
+                      <div>
+                        <span className="font-medium">
+                          {getRoleDisplayName(role, hasEmployee)}
+                        </span>
+                        <span className="block app-muted text-xs">
+                          {role.description}
+                        </span>
+                      </div>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
+            ) : (
+              <p className="app-muted text-sm">
+                Assign roles after creating the account under Users → Role assignments.
+              </p>
+            )}
 
             <label className="app-label flex items-center gap-3 text-sm">
               <input
@@ -222,7 +239,7 @@ const UserModal = ({
             </button>
             <button
               type="submit"
-              disabled={loading || values.role_codes.length === 0}
+              disabled={loading || (isEdit && values.role_codes.length === 0)}
               className="app-btn-primary px-4 py-2 text-sm"
             >
               {loading ? 'Saving...' : submitLabel}

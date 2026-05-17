@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { getEmployees } from '../../employees/services/employee.service';
 import type { Employee } from '../../employees/types/employee';
@@ -62,7 +63,6 @@ const UsersPage = () => {
         username: values.username,
         password: values.password,
         employee_id: values.employee_id || null,
-        role_codes: values.role_codes,
         is_active: values.is_active,
       });
       setModalMode(null);
@@ -117,16 +117,21 @@ const UsersPage = () => {
             unlinked for Administrator or Guest (read-only).
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            setSelectedItem(null);
-            setModalMode('create');
-          }}
-          className="app-btn-primary px-5 py-3 text-sm"
-        >
-          + Add User
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <Link to="/users/role-assignments" className="app-btn-secondary px-4 py-3 text-sm">
+            Role assignments
+          </Link>
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedItem(null);
+              setModalMode('create');
+            }}
+            className="app-btn-primary px-5 py-3 text-sm"
+          >
+            + Add User
+          </button>
+        </div>
       </div>
 
       {error && (

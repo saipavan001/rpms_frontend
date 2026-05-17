@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 
 import {
-  MANAGEMENT_SYSTEMS,
+  getActiveManagementSystems,
+  getSystemHomeRoute,
   type ManagementSystem,
 } from '../config/management-systems';
 
@@ -16,14 +17,17 @@ const systemAccent: Record<string, string> = {
 
 type ManagementSystemsHubProps = {
   canManageUsers: boolean;
+  isResearcherEmployee?: boolean;
 };
 
 const SystemCard = ({
   system,
   disabled,
+  homeRoute,
 }: {
   system: ManagementSystem;
   disabled: boolean;
+  homeRoute?: string;
 }) => {
   const accent =
     systemAccent[system.id] ?? 'border-slate-200/80 bg-white/80 dark:border-white/10 dark:bg-white/5';
@@ -53,27 +57,28 @@ const SystemCard = ({
       <p className="mt-2 flex-1 app-muted text-sm leading-relaxed">
         {system.description}
       </p>
-      {!isComingSoon && system.homeRoute && (
+      {!isComingSoon && homeRoute && (
         <p className="mt-4 text-sm font-medium text-blue-400">Open system →</p>
       )}
     </div>
   );
 
-  if (disabled || isComingSoon || !system.homeRoute) {
+  if (disabled || isComingSoon || !homeRoute) {
     return inner;
   }
 
   return (
-    <Link to={system.homeRoute} className="block h-full">
+    <Link to={homeRoute} className="block h-full">
       {inner}
     </Link>
   );
 };
 
-const ManagementSystemsHub = ({ canManageUsers }: ManagementSystemsHubProps) => {
-  const systems = MANAGEMENT_SYSTEMS.filter(
-    (s) => !s.superAdminOnly || canManageUsers
-  );
+const ManagementSystemsHub = ({
+  canManageUsers,
+  isResearcherEmployee = false,
+}: ManagementSystemsHubProps) => {
+  const systems = getActiveManagementSystems(canManageUsers, isResearcherEmployee);
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -81,6 +86,7 @@ const ManagementSystemsHub = ({ canManageUsers }: ManagementSystemsHubProps) => 
         <SystemCard
           key={system.id}
           system={system}
+          homeRoute={getSystemHomeRoute(system, isResearcherEmployee)}
           disabled={system.superAdminOnly === true && !canManageUsers}
         />
       ))}

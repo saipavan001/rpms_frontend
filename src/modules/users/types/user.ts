@@ -41,7 +41,7 @@ export type CreateUserInput = {
   username: string;
   password: string;
   employee_id?: string | null;
-  role_codes: string[];
+  role_codes?: string[];
   is_active?: boolean;
 };
 

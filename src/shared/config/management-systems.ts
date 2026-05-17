@@ -3,6 +3,8 @@ export type ManagementSystemStatus = 'active' | 'coming_soon';
 export type NavItem = {
   to: string;
   label: string;
+  /** Shown only for Research Admin / Super Admin */
+  rpmsSettingsOnly?: boolean;
 };
 
 export type ManagementSystem = {
@@ -14,6 +16,9 @@ export type ManagementSystem = {
   /** Primary route when opening this system from the hub */
   homeRoute?: string;
   navItems?: NavItem[];
+  /** PI / employee self-service (linked employee + researcher) */
+  selfServiceNavItems?: NavItem[];
+  selfServiceHomeRoute?: string;
   /** Only shown when user can manage users (Super Admin) */
   superAdminOnly?: boolean;
 };
@@ -40,7 +45,9 @@ export const MANAGEMENT_SYSTEMS: ManagementSystem[] = [
     description: 'Register staff, assign units, and maintain employee records.',
     status: 'active',
     homeRoute: '/employees',
+    selfServiceHomeRoute: '/my-employee',
     navItems: [{ to: '/employees', label: 'Employees' }],
+    selfServiceNavItems: [{ to: '/my-employee', label: 'My details' }],
   },
   {
     id: 'access',
@@ -57,10 +64,26 @@ export const MANAGEMENT_SYSTEMS: ManagementSystem[] = [
   },
   {
     id: 'project',
-    name: 'Project Management System',
-    shortName: 'Projects',
-    description: 'Plan, track, and deliver work across teams.',
-    status: 'coming_soon',
+    name: 'Research Project Management System',
+    shortName: 'RPMS',
+    description:
+      'Research proposals, ethics clearances, optional budgets, and OU committee approval.',
+    status: 'active',
+    homeRoute: '/rpms/projects',
+    navItems: [
+      { to: '/rpms/projects', label: 'Proposals' },
+      { to: '/rpms/projects/new', label: 'New proposal' },
+      {
+        to: '/rpms/settings',
+        label: 'Approval committees',
+        rpmsSettingsOnly: true,
+      },
+      {
+        to: '/rpms/settings/masters',
+        label: 'Funding & budget masters',
+        rpmsSettingsOnly: true,
+      },
+    ],
   },
   {
     id: 'payroll',
@@ -80,21 +103,52 @@ export const MANAGEMENT_SYSTEMS: ManagementSystem[] = [
 
 export const PLATFORM_NAV: NavItem[] = [{ to: '/dashboard', label: 'Dashboard' }];
 
-export const getActiveManagementSystems = (canManageUsers: boolean) =>
-  MANAGEMENT_SYSTEMS.filter(
-    (system) =>
-      system.status === 'active' &&
-      (!system.superAdminOnly || canManageUsers)
-  );
+const RESEARCHER_EMPLOYEE_SYSTEM_IDS = new Set(['employee', 'project']);
 
-export const getSidebarNavGroups = (canManageUsers: boolean) => {
+export const getActiveManagementSystems = (
+  canManageUsers: boolean,
+  isResearcherEmployee = false
+) =>
+  MANAGEMENT_SYSTEMS.filter((system) => {
+    if (system.status !== 'active') return false;
+    if (isResearcherEmployee) {
+      return RESEARCHER_EMPLOYEE_SYSTEM_IDS.has(system.id);
+    }
+    return !system.superAdminOnly || canManageUsers;
+  });
+
+export const getSidebarNavGroups = (
+  canManageUsers: boolean,
+  canManageRpmsSettings = false,
+  isResearcherEmployee = false
+) => {
   const groups: { system: ManagementSystem; items: NavItem[] }[] = [];
 
-  for (const system of getActiveManagementSystems(canManageUsers)) {
-    if (system.navItems?.length) {
-      groups.push({ system, items: system.navItems });
+  for (const system of getActiveManagementSystems(
+    canManageUsers,
+    isResearcherEmployee
+  )) {
+    const baseItems = isResearcherEmployee
+      ? (system.selfServiceNavItems ?? system.navItems)
+      : system.navItems;
+
+    if (!baseItems?.length) continue;
+
+    const items = baseItems.filter(
+      (item) => !item.rpmsSettingsOnly || canManageRpmsSettings
+    );
+    if (items.length) {
+      groups.push({ system, items });
     }
   }
 
   return groups;
 };
+
+export const getSystemHomeRoute = (
+  system: ManagementSystem,
+  isResearcherEmployee: boolean
+) =>
+  isResearcherEmployee && system.selfServiceHomeRoute
+    ? system.selfServiceHomeRoute
+    : system.homeRoute;

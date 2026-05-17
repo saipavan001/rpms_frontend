@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../../shared/context/AuthContext';
 import { APP_NAME, APP_TAGLINE } from '../../../shared/config/brand';
 import ManagementSystemsHub from '../../../shared/components/ManagementSystemsHub';
-import { getEmployees } from '../../employees/services/employee.service';
+import EmployeeProfileDetail from '../../employees/components/EmployeeProfileDetail';
+import { getEmployees, getMyEmployee } from '../../employees/services/employee.service';
+import type { Employee } from '../../employees/types/employee';
 import { getOrgUnitTypeHierarchies } from '../../org-unit-type-hierarchies/services/org-unit-type-hierarchy.service';
 import { getOrgUnitTypes } from '../../org-unit-types/services/org-unit-type.service';
 import { getOrganizationUnits } from '../../organization-units/services/organization-unit.service';
@@ -124,8 +126,9 @@ const statusStyles: Record<
 };
 
 const DashboardPage = () => {
-  const { canManageUsers } = useAuth();
+  const { canManageUsers, isResearcherEmployee, user } = useAuth();
   const [stats, setStats] = useState<SetupStats | null>(null);
+  const [myEmployee, setMyEmployee] = useState<Employee | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -134,6 +137,12 @@ const DashboardPage = () => {
       try {
         setLoading(true);
         setError('');
+
+        if (isResearcherEmployee) {
+          const employee = await getMyEmployee();
+          setMyEmployee(employee);
+          return;
+        }
 
         const [types, hierarchies, units, employees] = await Promise.all([
           getOrgUnitTypes(),
@@ -150,18 +159,78 @@ const DashboardPage = () => {
           employees: employees.length,
         });
       } catch (err) {
-        setError(getApiErrorMessage(err, 'Failed to load setup progress.'));
+        setError(getApiErrorMessage(err, 'Failed to load dashboard.'));
       } finally {
         setLoading(false);
       }
     };
 
     loadStats();
-  }, []);
+  }, [isResearcherEmployee]);
 
   const completedSteps = stats
     ? setupSteps.filter((s) => s.getStatus(stats) === 'complete').length
     : 0;
+
+  if (isResearcherEmployee) {
+    const displayName =
+      myEmployee?.employee_name ?? user?.employee?.employee_name ?? user?.username;
+
+    return (
+      <div className="mx-auto max-w-7xl space-y-8 sm:space-y-10">
+        <div>
+          <p className="text-sm font-medium uppercase tracking-wide text-blue-400">
+            {APP_NAME}
+          </p>
+          <h1 className="mt-1 app-page-title">Welcome, {displayName}</h1>
+          <p className="mt-2 max-w-2xl app-muted text-sm sm:text-base">
+            Your employee profile and research proposals. Use RPMS to create and
+            submit project proposals for committee approval.
+          </p>
+        </div>
+
+        {error && (
+          <div role="alert" className="app-alert-warning">
+            {error}
+          </div>
+        )}
+
+        {loading ? (
+          <p className="app-card p-8 text-center text-slate-500">Loading…</p>
+        ) : (
+          <div className="grid gap-8 lg:grid-cols-2">
+            <div>
+              <p className="mb-3 text-sm font-medium uppercase tracking-wide text-emerald-400">
+                Employee Management System
+              </p>
+              {myEmployee ? (
+                <EmployeeProfileDetail employee={myEmployee} />
+              ) : (
+                <p className="app-card p-6 text-sm text-slate-500">
+                  No employee record found.
+                </p>
+              )}
+              <Link
+                to="/my-employee"
+                className="mt-3 inline-block text-sm font-medium text-blue-400 hover:underline"
+              >
+                View full employee record →
+              </Link>
+            </div>
+            <div>
+              <p className="mb-3 text-sm font-medium uppercase tracking-wide text-sky-400">
+                Research Project Management System
+              </p>
+              <ManagementSystemsHub
+                canManageUsers={false}
+                isResearcherEmployee
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-7xl space-y-8 sm:space-y-10">

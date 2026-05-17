@@ -4,11 +4,14 @@ import type { Role } from '../types/user';
 export const LINKED_EMPLOYEE_ROLE_CODES = [
   ROLE_CODES.ADMIN,
   ROLE_CODES.EMPLOYEE,
+  ROLE_CODES.RESEARCHER,
 ] as const;
 
 export const ADMINISTRATIVE_ROLE_CODES = [
   ROLE_CODES.ADMIN,
   ROLE_CODES.GUEST,
+  ROLE_CODES.RESEARCH_ADMIN,
+  ROLE_CODES.COMMITTEE_MEMBER,
 ] as const;
 
 export const getAccountRolesForEmployee = (

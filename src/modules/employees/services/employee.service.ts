@@ -26,6 +26,12 @@ export const getEmployeeById = async (id: string): Promise<Employee> => {
   return response.data.data;
 };
 
+export const getMyEmployee = async (): Promise<Employee> => {
+  const response = await apiClient.get<ApiResponse<Employee>>('/employees/me');
+
+  return response.data.data;
+};
+
 export const createEmployee = async (
   input: CreateEmployeeInput
 ): Promise<Employee> => {

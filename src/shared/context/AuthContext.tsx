@@ -13,9 +13,13 @@ import {
 } from '../../modules/auth/services/auth.service';
 import {
   canAccessErpModules,
+  canAccessRpms,
+  canCreateRpmsProjects,
+  canManageRpmsSettings,
   canManageUsers,
   canWrite,
   isEmployeePortalUser,
+  isResearcherEmployee,
   type AuthUser,
 } from '../auth/permissions';
 
@@ -25,7 +29,11 @@ type AuthContextValue = {
   canWrite: boolean;
   canManageUsers: boolean;
   canAccessErpModules: boolean;
+  canAccessRpms: boolean;
+  canManageRpmsSettings: boolean;
+  canCreateRpmsProjects: boolean;
   isEmployeePortalUser: boolean;
+  isResearcherEmployee: boolean;
   refreshUser: () => Promise<void>;
   setUser: (user: AuthUser | null) => void;
   logout: () => Promise<void>;
@@ -77,7 +85,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       canWrite: user ? canWrite(user.roles) : false,
       canManageUsers: user ? canManageUsers(user.roles) : false,
       canAccessErpModules: user ? canAccessErpModules(user.roles) : false,
+      canAccessRpms: user ? canAccessRpms(user.roles) : false,
+      canManageRpmsSettings: user ? canManageRpmsSettings(user.roles) : false,
+      canCreateRpmsProjects: user ? canCreateRpmsProjects(user.roles) : false,
       isEmployeePortalUser: user ? isEmployeePortalUser(user.roles) : false,
+      isResearcherEmployee: user ? isResearcherEmployee(user) : false,
       refreshUser,
       setUser,
       logout,

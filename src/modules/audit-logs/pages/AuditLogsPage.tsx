@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { getAuditLogs } from '../services/audit-log.service';
 import type { AuditLog, AuditLogFilters } from '../types/audit-log';

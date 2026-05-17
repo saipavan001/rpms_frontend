@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -31,7 +31,7 @@ const completeAuth = (
   const user = extractAuthUser(response);
   if (user) {
     setUser(user);
-    navigate(getHomePath(user.roles));
+    navigate(getHomePath(user));
     return null;
   }
 
